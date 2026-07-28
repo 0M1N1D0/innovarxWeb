@@ -1,0 +1,45 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.nav ul {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.nav a {
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.nav a:hover {
+  color: var(--color-ink);
+}
+
+@media (max-width: 720px) {
+  .nav {
+    display: none;
+  }
+}

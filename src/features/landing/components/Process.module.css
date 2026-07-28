@@ -1,0 +1,56 @@
+.process {
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-brand-indigo);
+}
+
+.title {
+  margin-top: var(--space-3);
+  font-size: var(--text-h2);
+  font-weight: 600;
+}
+
+.steps {
+  margin-top: var(--space-8);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+  text-align: left;
+}
+
+.step {
+  padding: var(--space-5);
+}
+
+.number {
+  display: inline-flex;
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--color-brand-indigo);
+}
+
+.stepTitle {
+  margin-top: var(--space-3);
+  font-size: var(--text-h3);
+  font-weight: 600;
+}
+
+.stepDescription {
+  margin-top: var(--space-2);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 800px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}

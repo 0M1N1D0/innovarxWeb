@@ -1,0 +1,23 @@
+.cta {
+  text-align: center;
+  padding: var(--space-8) 0;
+}
+
+.title {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.subcopy {
+  margin: var(--space-3) auto 0;
+  max-width: 480px;
+  font-size: var(--text-body-lg);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.actions {
+  margin-top: var(--space-6);
+  display: flex;
+  justify-content: center;
+}

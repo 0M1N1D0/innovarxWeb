@@ -1,0 +1,85 @@
+/*
+ * Tokens de diseño — InnovArx
+ * Fuente de verdad: ia-docs/global/styles.md §7.2
+ *
+ * Las tres familias tipográficas se cargan con next/font/google (ver src/app/layout.tsx),
+ * que expone cada una como variable CSS generada (--font-space-grotesk, --font-manrope,
+ * --font-ibm-plex-mono). Por eso --font-display/--font-body/--font-mono referencian esas
+ * variables en vez del nombre de familia literal — ver nota en styles.md §7.2.
+ */
+:root {
+  /* Color — gradiente de marca */
+  --color-brand-blue: #1f5ef3;
+  --color-brand-indigo: #5a51e8;
+  --color-brand-purple: #9644dc;
+  --color-brand-magenta: #c934c0;
+  --color-brand-pink: #fc24a5;
+  --gradient-brand-x: linear-gradient(
+    90deg,
+    var(--color-brand-blue) 0%,
+    var(--color-brand-indigo) 25%,
+    var(--color-brand-purple) 50%,
+    var(--color-brand-magenta) 75%,
+    var(--color-brand-pink) 100%
+  );
+  --gradient-brand-diag: linear-gradient(
+    135deg,
+    var(--color-brand-blue) 0%,
+    var(--color-brand-indigo) 25%,
+    var(--color-brand-purple) 50%,
+    var(--color-brand-magenta) 75%,
+    var(--color-brand-pink) 100%
+  );
+
+  /* Color — neutrales */
+  --color-ink: #131313;
+  --color-text-secondary: #4a4a52;
+  --color-text-subtle: #b8b8c2;
+  --color-border: #e6e6ec;
+  --color-surface-elevated: #efeff3;
+  --color-bg: #f6f6f9;
+  --color-bg-alt: #f8f7fd;
+  --color-surface-dark: #15122b;
+  --color-white: #ffffff;
+
+  /* Color — semántico */
+  --color-success: #12805c;
+
+  /* Tipografía */
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+
+  --text-display: 2.75rem;
+  --text-h2: 1.5rem;
+  --text-h3: 1.125rem;
+  --text-body-lg: 1rem;
+  --text-body: 0.875rem;
+  --text-body-sm: 0.8rem;
+  --text-caption: 0.7rem;
+  --text-micro: 0.625rem;
+
+  /* Espaciado */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* Radios */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(19, 19, 19, 0.04);
+  --shadow-md: 0 4px 12px rgba(19, 19, 19, 0.06);
+  --shadow-lg: 0 12px 32px rgba(19, 19, 19, 0.1);
+  --shadow-brand: 0 8px 24px rgba(90, 81, 232, 0.25);
+}

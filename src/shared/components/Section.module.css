@@ -1,0 +1,21 @@
+.section {
+  padding: var(--space-9) var(--space-5);
+}
+
+.default {
+  background: var(--color-white);
+}
+
+.alt {
+  background: var(--color-bg-alt);
+}
+
+.dark {
+  background: var(--color-surface-dark);
+  color: var(--color-white);
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+}

@@ -1,0 +1,33 @@
+.wrapper {
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-brand-indigo);
+}
+
+.title {
+  margin-top: var(--space-3);
+  font-size: var(--text-h2);
+  font-weight: 600;
+}
+
+.intro {
+  margin: var(--space-3) auto 0;
+  max-width: 560px;
+  font-size: var(--text-body);
+  color: var(--color-text-secondary);
+}
+
+.grid {
+  margin-top: var(--space-8);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-5);
+  text-align: left;
+}
