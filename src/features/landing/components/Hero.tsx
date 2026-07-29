@@ -1,37 +1,37 @@
+import { useTranslations } from "next-intl";
 import { Button } from "@/shared/components/Button";
 import styles from "./Hero.module.css";
 
-const TRUST_ITEMS = [
-  { title: "Seguridad", description: "SSL, backups y mejores prácticas." },
-  { title: "Rendimiento", description: "Sitios rápidos y optimizados." },
-  { title: "Soporte", description: "Acompañamiento continuo." },
-];
+// Solo los IDs quedan en código: el orden y la existencia de los tres bloques es
+// estructura, no copy. El texto vive en messages/<locale>.json → landing.hero.trust.
+const TRUST_ITEM_IDS = ["security", "performance", "support"] as const;
 
 export function Hero() {
+  const t = useTranslations("landing.hero");
+  const tCommon = useTranslations("common");
+
   return (
     <div className={styles.hero}>
-      <p className={styles.eyebrow}>Desarrollo web a medida</p>
+      <p className={styles.eyebrow}>{t("eyebrow")}</p>
       <h1 className={styles.title}>
-        Desarrollo web <span className={styles.accent}>a medida</span>, de landing page a
-        plataforma completa.
+        {t.rich("title", {
+          accent: (chunks) => <span className={styles.accent}>{chunks}</span>,
+        })}
       </h1>
-      <p className={styles.subcopy}>
-        Creamos experiencias digitales rápidas, seguras y escalables que convierten visitantes en
-        clientes.
-      </p>
+      <p className={styles.subcopy}>{t("subcopy")}</p>
       <div className={styles.actions}>
         <Button href="#servicios" variant="primary">
-          Ver servicios →
+          {t("ctaServices")}
         </Button>
         <Button href="#contacto" variant="secondary">
-          Cotizar proyecto →
+          {tCommon("cta.quoteProject")}
         </Button>
       </div>
       <ul className={styles.trust}>
-        {TRUST_ITEMS.map((item) => (
-          <li key={item.title}>
-            <p className={styles.trustTitle}>{item.title}</p>
-            <p className={styles.trustDescription}>{item.description}</p>
+        {TRUST_ITEM_IDS.map((id) => (
+          <li key={id}>
+            <p className={styles.trustTitle}>{t(`trust.${id}.title`)}</p>
+            <p className={styles.trustDescription}>{t(`trust.${id}.description`)}</p>
           </li>
         ))}
       </ul>

@@ -47,9 +47,15 @@ El proyecto se organiza **por feature**, no por tipo de archivo. Cada feature es
 
 ```
 src/
-  app/                        # solo rutas y layouts; ensambla features, no implementa lógica
-    layout.tsx
-    page.tsx
+  app/
+    (root)/                   # "/" — shim estático sin feature dueña, ver §6
+      layout.tsx
+      page.tsx
+    [locale]/                 # solo rutas y layouts; ensambla features, no implementa lógica
+      layout.tsx
+      page.tsx
+  i18n/                       # plomería de next-intl (routing, request config, navigation)
+  messages/                   # catálogo de mensajes, un JSON por locale — ver §3 nota de i18n
   features/
     landing/
       components/             # UI propia de la feature
@@ -80,6 +86,7 @@ src/
 
 **Reglas de la arquitectura y su porqué:**
 
+- `src/i18n/` y `src/messages/` no son features: son plomería transversal, del mismo nivel que `src/styles/`. `src/messages/<locale>.json` es un catálogo **centralizado**, no uno por feature — un catálogo por feature obligaría a `src/i18n/request.ts` a importar rutas internas de cada feature (prohibido más abajo) o a que cada feature reexportara su catálogo desde `index.ts`, ensuciando con datos estáticos la superficie pública que esa regla protege. Lo que sí se conserva es la propiedad que motiva "una feature, una carpeta": **el namespace de primer nivel de cada JSON es el nombre de la feature** — borrar una feature implica borrar su bloque de ambos catálogos en el mismo cambio.
 - Una carpeta por feature. Dentro, solo se crean las subcarpetas que realmente se usan — nada de `hooks/` vacío "por si acaso". *Una carpeta vacía es una promesa de estructura que nadie pidió; añade ruido a la exploración sin añadir información.*
 - Cada feature expone su superficie pública en `index.ts`. **Está prohibido importar rutas internas de otra feature** (ej. `features/pricing/components/Card` desde `features/landing`). *Sin esta regla, el límite entre features se vuelve implícito y cualquier refactor interno de una feature puede romper otra sin aviso.*
 - **Las features no se importan entre sí.** Si dos features necesitan lo mismo, ese código sube a `shared/`. *Esto es lo que hace posible borrar una feature completa sin arqueología: si nada más la importa, su carpeta es el único lugar a tocar.*
@@ -103,6 +110,8 @@ componente  →  hook  →  service  →  fuente de datos
 
 **Consecuencia directa:** hoy `services/` lee data local; el día que exista FastAPI, el cambio se limita a reescribir las funciones de `services/` de cada feature para que hagan `fetch` en vez de leer un archivo. Ni los componentes ni los hooks se enteran del cambio — su contrato con `services/` no varía.
 
+**Localización de contenido — dos canales distintos, ver D5 (§7):** la copy de interfaz (botones, etiquetas, títulos de sección) llega por el catálogo de mensajes de next-intl, resuelto en el componente. El **contenido de dominio** (nombres y descripciones de los niveles de servicio, por ejemplo) llega por `services/`, que recibe el locale como parámetro explícito (`getServiceLevels(locale)`) y devuelve datos ya localizados — la cadena `componente → service → fuente` no cambia, solo gana un parámetro. El catálogo de mensajes nunca contiene datos de dominio.
+
 ## 5. Estrategia de renderizado
 
 **Server Components por defecto.** `"use client"` se añade solo cuando un componente concretamente lo necesita:
@@ -114,19 +123,24 @@ componente  →  hook  →  service  →  fuente de datos
 
 **Regla de posición:** la frontera `"use client"` se empuja lo más abajo posible en el árbol de componentes — al componente hoja que realmente necesita interactividad, no al contenedor que lo envuelve. *Marcar un componente alto en el árbol como cliente arrastra a todos sus hijos al bundle de cliente aunque no lo necesiten, y elimina el streaming/SSR que Server Components ofrece por defecto.*
 
+**Caso concreto — `LocaleSwitcher`:** es deliberadamente un Server Component (dos enlaces a `/es` y `/en`, sin estado ni efectos). El proyecto entero tiene cero componentes `"use client"`; la condición que convertiría al switcher en el primero es la aparición de rutas más allá de `/` (`/servicios`, `/contacto`), momento en que necesita `usePathname()` para preservar la ruta activa al cambiar de idioma.
+
 ## 6. Rutas
 
-El árbol de `app/` refleja uno a uno las features existentes — no hay una feature sin ruta ni una ruta sin feature dueña:
+El árbol de `app/` refleja uno a uno las features existentes — no hay una feature sin ruta ni una ruta sin feature dueña. Todas las rutas del sitio están **localizadas y prefijadas** (`/es`, `/en`) salvo la raíz, que es un shim sin locale propio:
 
 | Ruta | Feature | Estado | Nota |
 |---|---|---|---|
-| `/` | `landing` | Implementada | Home; ensambla también `services-catalog` como sección de la página |
-| `/servicios` | `services-catalog` | Pendiente | Catálogo completo como ruta propia |
-| `/contacto` | `contact` | Pendiente | Formulario de contacto |
+| `/` | — | Implementada | Shim estático (`app/(root)/`) sin feature dueña: `<meta http-equiv="refresh">` a `/es`. No usa `redirect()` porque no produce HTML exportable bajo `output: 'export'` — ver §8 |
+| `/es`, `/en` | `landing` | Implementada | Home por locale; ensambla también `services-catalog` como sección de la página |
+| `/es/servicios`, `/en/servicios` | `services-catalog` | Pendiente | Catálogo completo como ruta propia. ⚠ El segmento debe ser **idéntico** en ambos locales (`servicios`, no `services` en inglés): sin servidor no hay *rewrites* que soporten *pathnames* traducidos |
+| `/es/contacto`, `/en/contacto` | `contact` | Pendiente | Formulario de contacto. Mismo requisito de segmento idéntico |
 
 > **Sin `pricing` ni precios en la landing.** Es una decisión de producto, no una omisión: la home no muestra rangos de precio de ningún nivel de servicio, aunque el catálogo fuente los incluya. Si en el futuro se decide publicar precios, se hace como una feature `pricing` explícita y su propia ruta — no se reintroducen tácitamente dentro de `landing` o `services-catalog`.
 
-`app/<ruta>/page.tsx` importa desde el `index.ts` de su feature dueña — nunca compone UI propia más allá de layout de página. Metadata y SEO (`generateMetadata`, `<title>`, OpenGraph) se definen en el `page.tsx`/`layout.tsx` correspondiente de `app/`, no dentro de la feature, porque es responsabilidad del enrutador, no del dominio.
+`app/[locale]/<ruta>/page.tsx` importa desde el `index.ts` de su feature dueña — nunca compone UI propia más allá de layout de página. Metadata y SEO (`generateMetadata`, `<title>`, OpenGraph) se definen en el `page.tsx`/`layout.tsx` correspondiente de `app/[locale]/`, no dentro de la feature, porque es responsabilidad del enrutador, no del dominio. Con i18n, `metadata` estático se reemplaza por `generateMetadata({ params })` async, que resuelve título/descripción/`og:locale` por locale y llama a `setRequestLocale` antes de cualquier función de next-intl.
+
+`app/(root)/` es la única ruta sin locale y, por lo mismo, sin feature dueña: sus dos strings visibles (los enlaces de fallback a `/es` y `/en`) van hardcodeados a propósito, con un comentario explicando por qué esa página no puede usar el catálogo de mensajes.
 
 > Esta tabla es el mapa vigente mientras el sitio tenga estas cuatro features. Al añadir una feature nueva con ruta propia, se añade su fila aquí en el mismo cambio.
 
@@ -150,6 +164,10 @@ Formato: Decisión / Contexto / Consecuencias.
 - *Contexto:* la identidad visual (`styles.md`) está definida como tokens exactos (color, tipografía, espaciado) extraídos de activos de marca reales, no como una paleta genérica de utilidades.
 - *Consecuencias:* cada componente tiene su `Componente.module.css`; ningún valor de diseño se escribe literal, todo se consume vía `var(--token)` (ver [`tech-stack.md`](./tech-stack.md) §4 para el detalle de implementación).
 
+**D5 — La copy de UI se localiza en el catálogo de mensajes; el contenido de dominio se localiza en `services/`.**
+- *Contexto:* los nombres y descripciones de los niveles de servicio son datos que el negocio posee — hoy vienen del catálogo PDF, mañana los serviría FastAPI ya localizados por `Accept-Language` o `?lang=`. Resolverlos desde `messages/*.json` por `id` crearía dos fuentes de verdad para el mismo campo el día que exista ese backend, exactamente la dispersión que D3 previene.
+- *Consecuencias:* `getServiceLevels(locale)` devuelve datos ya localizados; el catálogo de mensajes de next-intl nunca contiene datos de dominio (nombres de producto, descripciones de servicio, rangos de entrega); el límite entre "copy de UI" y "contenido de dominio" es de **propiedad** (quién puede cambiar el valor sin tocar código), no de si el valor es o no una cadena de texto.
+
 ## 8. Decisiones abiertas
 
 **Hosting y estrategia de renderizado.** Sin definir todavía.
@@ -159,6 +177,8 @@ Implicación de cada rama:
 - **Export estático** (`output: 'export'`): descarta SSR y cualquier proxy hacia FastAPI vía `app/api/**` (§2). El sitio se sirve como archivos estáticos desde cualquier CDN/hosting.
 - **Despliegue en Node o Vercel**: habilita SSR y el proxy hacia FastAPI cuando exista.
 
-**Restricción vigente mientras no se decida:** el código no debe depender de características exclusivas de servidor (Route Handlers con lógica, `cookies()`/`headers()` fuera del proxy delgado, etc.) que bloqueen la opción de export estático. Mantener ambas ramas abiertas hasta que el hosting se decida explícitamente.
+**Restricción vigente mientras no se decida:** el código no debe depender de características exclusivas de servidor (Route Handlers con lógica, `cookies()`/`headers()` fuera del proxy delgado, **`proxy.ts`/`middleware.ts`**, etc.) que bloqueen la opción de export estático. Mantener ambas ramas abiertas hasta que el hosting se decida explícitamente.
 
 > En el scaffold inicial, `next.config.ts` ya declara `images: { unoptimized: true }` para no depender de la optimización de imágenes en servidor — es lo único que se necesitaba tocar hasta ahora para no cerrar la rama de export estático.
+
+**Internacionalización y esta restricción:** el enrutamiento de idioma (`/es`, `/en`) se implementó explícitamente **sin** `proxy.ts`/`middleware.ts` — esa es la razón por la que no hay detección automática de idioma por navegador, solo un selector manual. `Proxy` (nombre que Next 16 da al antiguo middleware) está en la lista de funciones no soportadas bajo `output: 'export'`; usarlo habría cerrado esta rama de forma unilateral. La restricción ahora es **verificable**, no solo declarativa: `npm run build:export` (ver [`tech-stack.md`](./tech-stack.md) §4) construye el sitio completo, con ambos locales, en modo export estático.

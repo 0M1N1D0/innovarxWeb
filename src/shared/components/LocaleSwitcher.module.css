@@ -1,0 +1,34 @@
+/* Hermano de .nav en SiteHeader, nunca hijo: .nav se oculta bajo 720px y el switcher
+   debe seguir visible ahí — es la única forma de cambiar idioma en móvil. */
+.switcher {
+  flex-shrink: 0;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1);
+}
+
+.link {
+  display: block;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+}
+
+.link:hover {
+  color: var(--color-ink);
+}
+
+.active {
+  background: var(--color-surface-elevated);
+  color: var(--color-ink);
+}

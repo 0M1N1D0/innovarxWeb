@@ -1,0 +1,87 @@
+{
+  "metadata": {
+    "title": "InnovArx — Custom Web Development",
+    "description": "We build fast, secure, and scalable digital experiences that turn visitors into customers. From landing pages to full platforms.",
+    "ogDescription": "We build fast, secure, and scalable digital experiences that turn visitors into customers."
+  },
+  "common": {
+    "nav": {
+      "services": "Services",
+      "process": "Process",
+      "contact": "Contact"
+    },
+    "cta": {
+      "quoteProject": "Get a quote →"
+    },
+    "brand": {
+      "tagline": "Custom web development, from landing pages to full platforms."
+    }
+  },
+  "siteHeader": {
+    "logoLabel": "InnovArx — home",
+    "navLabel": "Main navigation"
+  },
+  "siteFooter": {
+    "linksLabel": "Site links",
+    "copyright": "© {year} InnovArx. All rights reserved."
+  },
+  "localeSwitcher": {
+    "label": "Change language"
+  },
+  "landing": {
+    "hero": {
+      "eyebrow": "Custom web development",
+      "title": "Web development <accent>built to fit</accent>, from landing page to full platform.",
+      "subcopy": "We build fast, secure, and scalable digital experiences that turn visitors into customers.",
+      "ctaServices": "See services →",
+      "trust": {
+        "security": {
+          "title": "Security",
+          "description": "SSL, backups, and best practices."
+        },
+        "performance": {
+          "title": "Performance",
+          "description": "Fast, optimized websites."
+        },
+        "support": {
+          "title": "Support",
+          "description": "Ongoing support."
+        }
+      }
+    },
+    "process": {
+      "eyebrow": "How we work",
+      "title": "A clear, transparent, and agile process",
+      "steps": {
+        "quote": {
+          "title": "Quote",
+          "description": "Tell us about your project. Within 24–48 hours you'll get a price range and delivery time, free of charge."
+        },
+        "proposal": {
+          "title": "Proposal & payment plan",
+          "description": "We define scope and deliverables in writing, along with a payment plan tailored to your project and way of working."
+        },
+        "delivery": {
+          "title": "Development & delivery",
+          "description": "We build with reviewable milestones. We deliver, train you, and set up ongoing maintenance if you choose it."
+        }
+      }
+    },
+    "finalCta": {
+      "title": "Ready to start your project?",
+      "subcopy": "Let's turn your idea into a digital solution that grows your business.",
+      "cta": "Get my project quoted →"
+    }
+  },
+  "servicesCatalog": {
+    "eyebrow": "Our services",
+    "title": "Five levels for every stage of your project",
+    "intro": "Each level includes everything from the one before. Choose your starting point based on your project's scope — you can always scale up later.",
+    "card": {
+      "levelIndicator": "Level {current} / {total}",
+      "popular": "Popular",
+      "deliveryWeeks": "Delivery: {min} – {max} weeks",
+      "deliveryMonths": "Delivery: {min} – {max} months"
+    }
+  }
+}

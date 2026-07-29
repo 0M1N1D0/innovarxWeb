@@ -1,37 +1,24 @@
+import { useTranslations } from "next-intl";
 import styles from "./Process.module.css";
 
-const STEPS = [
-  {
-    number: "01",
-    title: "Cotización",
-    description:
-      "Cuéntanos tu proyecto. En 24–48 horas recibes un rango de precio y tiempo de entrega, sin costo.",
-  },
-  {
-    number: "02",
-    title: "Propuesta y plan de pago",
-    description:
-      "Definimos alcance y entregables por escrito, junto con un plan de pago adaptado a tu proyecto y forma de trabajar.",
-  },
-  {
-    number: "03",
-    title: "Desarrollo y entrega",
-    description:
-      "Construimos con avances revisables. Entregamos, capacitamos y activamos el mantenimiento si lo eliges.",
-  },
-];
+// Solo los IDs y el orden quedan en código; el texto vive en
+// messages/<locale>.json → landing.process.steps. El número visible ("01", "02"...)
+// es presentación, se deriva del índice — no vive en el catálogo.
+const STEP_IDS = ["quote", "proposal", "delivery"] as const;
 
 export function Process() {
+  const t = useTranslations("landing.process");
+
   return (
     <div className={styles.process}>
-      <p className={styles.eyebrow}>Cómo trabajamos</p>
-      <h2 className={styles.title}>Un proceso claro, transparente y ágil</h2>
+      <p className={styles.eyebrow}>{t("eyebrow")}</p>
+      <h2 className={styles.title}>{t("title")}</h2>
       <ol className={styles.steps}>
-        {STEPS.map((step) => (
-          <li key={step.number} className={styles.step}>
-            <span className={styles.number}>{step.number}</span>
-            <h3 className={styles.stepTitle}>{step.title}</h3>
-            <p className={styles.stepDescription}>{step.description}</p>
+        {STEP_IDS.map((id, index) => (
+          <li key={id} className={styles.step}>
+            <span className={styles.number}>{String(index + 1).padStart(2, "0")}</span>
+            <h3 className={styles.stepTitle}>{t(`steps.${id}.title`)}</h3>
+            <p className={styles.stepDescription}>{t(`steps.${id}.description`)}</p>
           </li>
         ))}
       </ol>

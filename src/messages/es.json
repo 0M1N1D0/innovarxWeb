@@ -1,0 +1,87 @@
+{
+  "metadata": {
+    "title": "InnovArx — Desarrollo web a medida",
+    "description": "Creamos experiencias digitales rápidas, seguras y escalables que convierten visitantes en clientes. De landing page a plataforma completa.",
+    "ogDescription": "Creamos experiencias digitales rápidas, seguras y escalables que convierten visitantes en clientes."
+  },
+  "common": {
+    "nav": {
+      "services": "Servicios",
+      "process": "Proceso",
+      "contact": "Contacto"
+    },
+    "cta": {
+      "quoteProject": "Cotizar proyecto →"
+    },
+    "brand": {
+      "tagline": "Desarrollo web a medida, de landing page a plataforma completa."
+    }
+  },
+  "siteHeader": {
+    "logoLabel": "InnovArx — inicio",
+    "navLabel": "Navegación principal"
+  },
+  "siteFooter": {
+    "linksLabel": "Enlaces del sitio",
+    "copyright": "© {year} InnovArx. Todos los derechos reservados."
+  },
+  "localeSwitcher": {
+    "label": "Cambiar idioma"
+  },
+  "landing": {
+    "hero": {
+      "eyebrow": "Desarrollo web a medida",
+      "title": "Desarrollo web <accent>a medida</accent>, de landing page a plataforma completa.",
+      "subcopy": "Creamos experiencias digitales rápidas, seguras y escalables que convierten visitantes en clientes.",
+      "ctaServices": "Ver servicios →",
+      "trust": {
+        "security": {
+          "title": "Seguridad",
+          "description": "SSL, backups y mejores prácticas."
+        },
+        "performance": {
+          "title": "Rendimiento",
+          "description": "Sitios rápidos y optimizados."
+        },
+        "support": {
+          "title": "Soporte",
+          "description": "Acompañamiento continuo."
+        }
+      }
+    },
+    "process": {
+      "eyebrow": "Cómo trabajamos",
+      "title": "Un proceso claro, transparente y ágil",
+      "steps": {
+        "quote": {
+          "title": "Cotización",
+          "description": "Cuéntanos tu proyecto. En 24–48 horas recibes un rango de precio y tiempo de entrega, sin costo."
+        },
+        "proposal": {
+          "title": "Propuesta y plan de pago",
+          "description": "Definimos alcance y entregables por escrito, junto con un plan de pago adaptado a tu proyecto y forma de trabajar."
+        },
+        "delivery": {
+          "title": "Desarrollo y entrega",
+          "description": "Construimos con avances revisables. Entregamos, capacitamos y activamos el mantenimiento si lo eliges."
+        }
+      }
+    },
+    "finalCta": {
+      "title": "¿Listo para empezar tu proyecto?",
+      "subcopy": "Transformemos tu idea en una solución digital que haga crecer tu negocio.",
+      "cta": "Cotizar mi proyecto →"
+    }
+  },
+  "servicesCatalog": {
+    "eyebrow": "Nuestros servicios",
+    "title": "Cinco niveles para cada etapa de tu proyecto",
+    "intro": "Cada nivel incluye todo lo del anterior. Elige el punto de partida según el alcance de tu proyecto — siempre puedes escalar más adelante.",
+    "card": {
+      "levelIndicator": "Nivel {current} / {total}",
+      "popular": "Popular",
+      "deliveryWeeks": "Entrega: {min} – {max} semanas",
+      "deliveryMonths": "Entrega: {min} – {max} meses"
+    }
+  }
+}

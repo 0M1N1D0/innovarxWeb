@@ -1,21 +1,34 @@
+import type { Locale } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { getServiceLevels } from "../services/service-levels.service";
 import { ServiceLevelCard } from "./ServiceLevelCard";
 import styles from "./ServiceLevels.module.css";
 
-export async function ServiceLevels() {
-  const serviceLevels = await getServiceLevels();
+interface ServiceLevelsProps {
+  locale: Locale;
+}
+
+export async function ServiceLevels({ locale }: ServiceLevelsProps) {
+  const [t, serviceLevels] = await Promise.all([
+    getTranslations({ locale, namespace: "servicesCatalog" }),
+    getServiceLevels(locale),
+  ]);
 
   return (
     <div className={styles.wrapper}>
-      <p className={styles.eyebrow}>Nuestros servicios</p>
-      <h2 className={styles.title}>Cinco niveles para cada etapa de tu proyecto</h2>
-      <p className={styles.intro}>
-        Cada nivel incluye todo lo del anterior. Elige el punto de partida según el alcance de tu
-        proyecto — siempre puedes escalar más adelante.
-      </p>
+      <p className={styles.eyebrow}>{t("eyebrow")}</p>
+      {/* servicesCatalog.title deletrea el conteo ("Cinco niveles"/"Five levels") a mano
+          en cada idioma — ICU no puede deletrear números. Si se añade un sexto nivel,
+          el titular de ambos catálogos se actualiza a mano. */}
+      <h2 className={styles.title}>{t("title")}</h2>
+      <p className={styles.intro}>{t("intro")}</p>
       <ul className={styles.grid}>
         {serviceLevels.map((serviceLevel) => (
-          <ServiceLevelCard key={serviceLevel.id} serviceLevel={serviceLevel} />
+          <ServiceLevelCard
+            key={serviceLevel.id}
+            serviceLevel={serviceLevel}
+            total={serviceLevels.length}
+          />
         ))}
       </ul>
     </div>

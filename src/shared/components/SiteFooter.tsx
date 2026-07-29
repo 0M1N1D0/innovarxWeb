@@ -1,14 +1,12 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { NAV_ITEMS } from "@/shared/lib/nav-items";
 import styles from "./SiteFooter.module.css";
-
-const FOOTER_LINKS = [
-  { href: "#servicios", label: "Servicios" },
-  { href: "#proceso", label: "Proceso" },
-  { href: "#contacto", label: "Contacto" },
-];
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
+  const t = useTranslations("siteFooter");
+  const tCommon = useTranslations("common");
 
   return (
     <footer className={styles.footer}>
@@ -18,26 +16,25 @@ export function SiteFooter() {
           <p className={styles.wordmark}>
             Innov<span className={styles.wordmarkAccent}>Arx</span>
           </p>
-          <p className={styles.tagline}>
-            Desarrollo web a medida, de landing page a plataforma completa.
-          </p>
+          <p className={styles.tagline}>{tCommon("brand.tagline")}</p>
         </div>
-        <nav aria-label="Enlaces del sitio">
+        <nav aria-label={t("linksLabel")}>
           <ul className={styles.links}>
-            {FOOTER_LINKS.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href}>{link.label}</Link>
+            {NAV_ITEMS.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href}>{tCommon(`nav.${item.key}`)}</Link>
               </li>
             ))}
           </ul>
         </nav>
-        {/* TODO: reemplazar por los datos de contacto reales de InnovArx */}
+        {/* TODO: reemplazar por los datos de contacto reales de InnovArx — no traducir,
+            son marcadores pendientes de dato real, no copy. */}
         <address className={styles.contact}>
           <p>[correo de contacto pendiente]</p>
           <p>[teléfono / WhatsApp pendiente]</p>
         </address>
       </div>
-      <p className={styles.copyright}>© {year} InnovArx. Todos los derechos reservados.</p>
+      <p className={styles.copyright}>{t("copyright", { year: String(year) })}</p>
     </footer>
   );
 }

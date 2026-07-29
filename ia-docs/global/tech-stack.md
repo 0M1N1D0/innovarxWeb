@@ -15,6 +15,7 @@
 | Gestor de paquetes | npm | Único gestor instalado en el entorno del proyecto; no se mezcla con pnpm/yarn |
 | Linter | ESLint 9 (flat config) + `eslint-config-next` | Ver §5 |
 | Formatter | Prettier | Ver §5 |
+| Internacionalización | next-intl 4 | ES (default) + EN, ambos con prefijo de ruta (`/es`, `/en`); sin proxy/middleware para no cerrar el export estático — ver [`architecture.md`](./architecture.md) §8 |
 | Backend (futuro, no existe hoy) | FastAPI | Servicio separado; se activa solo si el proyecto lo requiere — ver [`architecture.md`](./architecture.md) §2 |
 
 ## 2. TypeScript
@@ -22,6 +23,7 @@
 - `strict: true` en `tsconfig.json`; queda prohibido `any` (usar `unknown` + narrowing cuando el tipo no se conoce de antemano).
 - Los tipos de dominio de una feature viven en su propia carpeta `types/`; los tipos compartidos entre features viven en `src/shared/types/`.
 - Alias de import `@/*` apuntando a `src/*`. Prohibidas las rutas relativas profundas (`../../../`).
+- `src/global.ts` aumenta el módulo `next-intl` (`AppConfig.Locale` y `AppConfig.Messages`) a partir de `src/i18n/routing.ts` y `src/messages/es.json`. `es.json` es el catálogo canónico: sus claves son las que tipan `useTranslations`/`getTranslations` en todo el proyecto. `en.json` no está tipado por separado — una clave que falte ahí no la detecta `tsc`, solo el aviso en consola de next-intl en desarrollo.
 
 ## 3. Estilos
 
@@ -48,8 +50,22 @@ La fuente de verdad visual es [`styles.md`](./styles.md); este documento solo de
   | `start` | `next start` | |
   | `lint` | `eslint .` | `next lint` fue eliminado en Next 16; se invoca ESLint directamente |
   | `format` | `prettier --write .` | |
+  | `build:export` | `NEXT_OUTPUT=export next build` | Verifica que la rama de export estático sigue viable (`architecture.md` §8) — no decide el hosting, solo lo hace comprobable |
 
-## 5. Convenciones de nombres
+## 5. Internacionalización
+
+Implementada con **next-intl 4**. Reglas operativas — el detalle estructural (rutas, límites del sistema) está en [`architecture.md`](./architecture.md) §3, §6 y §8:
+
+- **Prohibido texto de usuario literal en `.tsx`.** Toda copy sale de `src/messages/<locale>.json` vía `useTranslations`/`getTranslations`. Excepciones documentadas explícitamente en el código: nombre de marca (`InnovArx`, wordmark), placeholders `TODO` pendientes de dato real (ej. contacto en `SiteFooter`), y el shim estático de `/` (no tiene locale, no puede traducirse).
+- `useTranslations` en Server Components síncronos; `getTranslations` (async) solo en componentes ya `async` o en `generateMetadata`. No convertir un componente en `async` únicamente para traducirlo.
+- `t.rich(...)` para mensajes con markup embebido (ej. un `<span>` de énfasis dentro de un titular) — el nombre de la etiqueta en el mensaje describe su rol semántico (`accent`), no la etiqueta HTML final.
+- `setRequestLocale(locale)` es la primera línea de **cada** `page.tsx` y `layout.tsx` bajo `app/[locale]/` — habilita el render estático; omitirlo degrada la ruta a dinámica en el build (ver `architecture.md` §8).
+- **Nunca crear `proxy.ts` ni `middleware.ts`.** Es una decisión deliberada, no una omisión: el proyecto no hace detección automática de idioma por navegador (selector manual en el header) precisamente para que el middleware —incompatible con `output: 'export'`— no cierre la rama de export estático (`architecture.md` §8).
+- `NextIntlClientProvider` está ausente a propósito: el proyecto no tiene ningún `"use client"` component, así que no hay a quién proveerle mensajes en el navegador. El día que exista el primero, se añade junto con él.
+- El extractor de mensajes basado en SWC que trae `next-intl` no se usa; el flujo es el catálogo JSON clásico.
+- Números interpolados en un mensaje (`{year}`, `{total}`) se formatean con separador de miles por defecto — pasar `String(valor)` cuando el número no debe llevarlo (ej. un año: `{year: 2026}` renderiza `2.026` en `es`).
+
+## 6. Convenciones de nombres
 
 | Elemento | Convención | Ejemplo |
 |---|---|---|
@@ -59,12 +75,16 @@ La fuente de verdad visual es [`styles.md`](./styles.md); este documento solo de
 | Servicio | camelCase con sufijo `.service` | `services.service.ts` |
 | Tipos | PascalCase | `Service`, `PricingTier` |
 | CSS Module | mismo nombre que el componente | `ServiceCard.module.css` |
+| Archivo de mensajes | código ISO 639-1 | `es.json`, `en.json` |
+| Namespace de mensajes | nombre de feature en camelCase | `servicesCatalog` |
+| Clave de mensaje | camelCase | `ctaServices`, `deliveryWeeks` |
 
-## 6. Puntos abiertos
+## 7. Puntos abiertos
 
 Estas decisiones aún no están tomadas. Se documentan como pendientes en vez de asumirse:
 
 - **Estrategia de testing.** Por definir.
 - **Existencia y contrato de la API de FastAPI.** Por definir — hoy no hay backend en este proyecto.
+- **Pathnames localizados** (ej. `/en/services` en vez de `/en/servicios`). Requieren rewrites de servidor vía la opción `pathnames` de next-intl, incompatibles con `output: 'export'` sin proxy. Descartado mientras no exista servidor — ver `architecture.md` §8.
 
 > Hosting y estrategia de renderizado es también una decisión abierta, pero de naturaleza estructural — ver [`architecture.md`](./architecture.md) §8.
