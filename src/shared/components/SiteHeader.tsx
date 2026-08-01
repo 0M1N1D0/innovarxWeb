@@ -19,7 +19,7 @@ export function SiteHeader() {
             de `use-intl` vía Context) y exigiría `NextIntlClientProvider` — ver
             src/i18n/navigation.ts. */}
         <NextLink href={`/${locale}`} className={styles.logoLink} aria-label={t("logoLabel")}>
-          <Image src="/logo-innovarx.jpg" alt="InnovArx" width={160} height={80} priority />
+          <Image src="/images/logo-innovarx.jpg" alt="InnovArx" width={160} height={80} priority />
         </NextLink>
         <nav className={styles.nav} aria-label={t("navLabel")}>
           <ul>

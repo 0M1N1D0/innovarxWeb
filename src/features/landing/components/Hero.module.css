@@ -1,8 +1,40 @@
 .hero {
-  max-width: 720px;
-  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-7);
   padding: var(--space-9) var(--space-5) var(--space-8);
-  text-align: center;
+}
+
+.content {
+  max-width: 520px;
+}
+
+/* Contexto de apilamiento de la columna visual: `isolation` evita que los z-index de la
+   laptop y el mockup de app (próxima entrega) compitan con el header sticky. */
+.visual {
+  position: relative;
+  isolation: isolate;
+}
+
+.brush {
+  position: relative;
+  width: 130%;
+  max-width: none;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .content {
+    max-width: none;
+  }
+
+  .brush {
+    width: 100%;
+  }
 }
 
 .eyebrow {
@@ -39,15 +71,14 @@
 }
 
 .subcopy {
-  margin: var(--space-5) auto 0;
-  max-width: 520px;
+  margin: var(--space-5) 0 0;
   font-size: var(--text-body-lg);
   color: var(--color-text-secondary);
 }
 
 .actions {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--space-4);
   margin-top: var(--space-6);
   flex-wrap: wrap;
@@ -55,8 +86,8 @@
 
 .trust {
   display: flex;
-  justify-content: center;
-  gap: var(--space-7);
+  justify-content: flex-start;
+  gap: var(--space-6);
   margin-top: var(--space-8);
   padding-top: var(--space-6);
   border-top: 1px solid var(--color-border);

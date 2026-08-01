@@ -82,4 +82,12 @@
   --shadow-md: 0 4px 12px rgba(19, 19, 19, 0.06);
   --shadow-lg: 0 12px 32px rgba(19, 19, 19, 0.1);
   --shadow-brand: 0 8px 24px rgba(90, 81, 232, 0.25);
+
+  /* Movimiento — ver styles.md §5.4 */
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 600ms;
+  --duration-brush: 1800ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }

@@ -1,0 +1,64 @@
+.wrapper {
+  display: block;
+  line-height: 0;
+}
+
+.stroke {
+  display: block;
+  width: 100%;
+  height: auto;
+
+  /*
+   * "Brocha invisible pintando": un gradiente de máscara barre el eje del trazo (~22°
+   * sobre la horizontal en el asset) y va revelando el PNG ya existente, de la cabeza
+   * gruesa (derecha) a la cola fina (izquierda). No se dibuja ninguna brocha — el propio
+   * borde del gradiente hace de punta de pincel. Los stops #000/transparent son el canal
+   * alfa de la máscara, no color visible: no cuentan como el literal hex que prohíbe
+   * CLAUDE.md para stylesheets.
+   *
+   * El ángulo (248deg = 68deg + 180°, mismo eje, sentido opuesto) y el sentido en que se
+   * desliza mask-position están acoplados: invertir uno sin el otro invierte también qué
+   * estado es "reposo" y cuál "pintado", rompiendo RF-3. Los dos giran juntos.
+   *
+   * mask-size 400% + banda de fundido 0%–38%/62% (no 300%/35%–55%, que dejaba la cabeza
+   * del trazo ~75% opaca en el fotograma final): con el elemento ocupando 1/4 del
+   * gradiente, ambos extremos de mask-position caen de lleno en zona sólida u opaca.
+   */
+  -webkit-mask-image: linear-gradient(248deg, #000 0%, #000 38%, transparent 62%);
+  mask-image: linear-gradient(248deg, #000 0%, #000 38%, transparent 62%);
+  -webkit-mask-size: 400% 400%;
+  mask-size: 400% 400%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 0% 0%;
+  mask-position: 0% 0%; /* reposo = sin pintar (RF-3) */
+}
+
+.isVisible {
+  animation: paint var(--duration-brush) var(--ease-out) forwards;
+}
+
+@keyframes paint {
+  from {
+    -webkit-mask-position: 0% 0%;
+    mask-position: 0% 0%;
+  }
+  to {
+    -webkit-mask-position: 100% 100%;
+    mask-position: 100% 100%;
+  }
+}
+
+/* Spec §7 — no es opcional: la mancha aparece completa de inmediato y no vuelve a
+   animarse en cada cruce de scroll. Esta media query es la garantía real; el short-circuit
+   en BrushStroke.tsx solo evita observar de más. */
+@media (prefers-reduced-motion: reduce) {
+  .stroke {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .isVisible {
+    animation: none;
+  }
+}

@@ -123,7 +123,9 @@ componente  →  hook  →  service  →  fuente de datos
 
 **Regla de posición:** la frontera `"use client"` se empuja lo más abajo posible en el árbol de componentes — al componente hoja que realmente necesita interactividad, no al contenedor que lo envuelve. *Marcar un componente alto en el árbol como cliente arrastra a todos sus hijos al bundle de cliente aunque no lo necesiten, y elimina el streaming/SSR que Server Components ofrece por defecto.*
 
-**Caso concreto — `LocaleSwitcher`:** es deliberadamente un Server Component (dos enlaces a `/es` y `/en`, sin estado ni efectos). El proyecto entero tiene cero componentes `"use client"`; la condición que convertiría al switcher en el primero es la aparición de rutas más allá de `/` (`/servicios`, `/contacto`), momento en que necesita `usePathname()` para preservar la ruta activa al cambiar de idioma.
+**Caso concreto — `LocaleSwitcher`:** es deliberadamente un Server Component (dos enlaces a `/es` y `/en`, sin estado ni efectos). La condición que lo convertiría en cliente es la aparición de rutas más allá de `/` (`/servicios`, `/contacto`), momento en que necesita `usePathname()` para preservar la ruta activa al cambiar de idioma.
+
+**Primer `"use client"` del proyecto — `BrushStroke`:** `src/shared/components/BrushStroke.tsx` (spec `ia-docs/specs/001-brush-animated-large/requirements.md`) usa `IntersectionObserver` para animar su "pintado" al entrar en viewport, una API exclusiva del navegador. Es la excepción a la regla anterior, aplicada exactamente como la regla exige: la frontera queda en la hoja — `Hero` y `HomePage`, que lo importan y renderizan, siguen siendo Server Components. No introduce `NextIntlClientProvider` (el componente es decorativo, no consume el catálogo de mensajes).
 
 ## 6. Rutas
 

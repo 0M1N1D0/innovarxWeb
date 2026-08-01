@@ -175,6 +175,25 @@ shadow-lg:  0 12px 32px rgba(19, 19, 19, 0.10)
 shadow-brand: 0 8px 24px rgba(90, 81, 232, 0.25)   /* halo de color para CTAs con gradiente */
 ```
 
+### 5.4 Movimiento
+
+Introducido para `BrushStroke` (`ia-docs/specs/001-brush-animated-large/requirements.md`), primer
+componente animado del sitio. Duraciones cortas para micro-interacciones (hover, transiciones de
+UI); `--duration-brush` es un caso aparte, calibrado para que el "pintado" del trazo se lea como
+un gesto deliberado, no un parpadeo.
+
+| Token | Valor | Uso |
+|---|---|---|
+| `duration-fast` | 150ms | Hover, focus, transiciones de UI puntuales |
+| `duration-base` | 300ms | Transiciones de UI por defecto |
+| `duration-slow` | 600ms | Transiciones de layout más notorias |
+| `duration-brush` | 1800ms | Ciclo completo del "pintado" de `BrushStroke` |
+| `ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | Entradas — arranque rápido, llegada suave |
+| `ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Transiciones simétricas (aparece y desaparece) |
+
+El retraso de ~1s antes de que `BrushStroke` arranque (RF-2 del spec 001) no es un token: es un
+valor por defecto de la prop `delay` del componente, no una constante de hoja de estilos.
+
 ## 6. Uso del logo
 
 - **Área de respeto:** dejar un margen mínimo alrededor del logo equivalente a la altura de la "I" de "Innov".
@@ -341,5 +360,13 @@ shadow-brand: 0 8px 24px rgba(90, 81, 232, 0.25)   /* halo de color para CTAs co
   --shadow-md: 0 4px 12px rgba(19, 19, 19, 0.06);
   --shadow-lg: 0 12px 32px rgba(19, 19, 19, 0.10);
   --shadow-brand: 0 8px 24px rgba(90, 81, 232, 0.25);
+
+  /* Movimiento */
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 600ms;
+  --duration-brush: 1800ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 ```
