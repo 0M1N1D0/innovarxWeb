@@ -10,19 +10,6 @@
   max-width: 520px;
 }
 
-/* Contexto de apilamiento de la columna visual: `isolation` evita que los z-index de la
-   laptop y el mockup de app (próxima entrega) compitan con el header sticky. */
-.visual {
-  position: relative;
-  isolation: isolate;
-}
-
-.brush {
-  position: relative;
-  width: 130%;
-  max-width: none;
-}
-
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;
@@ -30,10 +17,6 @@
 
   .content {
     max-width: none;
-  }
-
-  .brush {
-    width: 100%;
   }
 }
 

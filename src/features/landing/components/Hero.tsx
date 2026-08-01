@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
-import { BrushStroke } from "@/shared/components/BrushStroke";
 import { Button } from "@/shared/components/Button";
+import { HeroVisual } from "./HeroVisual";
 import styles from "./Hero.module.css";
 
 // Solo los IDs quedan en código: el orden y la existencia de los tres bloques es
@@ -38,12 +38,7 @@ export function Hero() {
           ))}
         </ul>
       </div>
-      {/* Contexto de apilamiento para la columna visual: la laptop y el mockup de app
-          (próxima entrega) se montan aquí, después del BrushStroke, para quedar por
-          delante — ver ia-docs/specs/001-brush-animated-large/requirements.md. */}
-      <div className={styles.visual}>
-        <BrushStroke className={styles.brush} />
-      </div>
+      <HeroVisual />
     </div>
   );
 }

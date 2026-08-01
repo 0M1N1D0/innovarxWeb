@@ -187,11 +187,12 @@ un gesto deliberado, no un parpadeo.
 | `duration-fast` | 150ms | Hover, focus, transiciones de UI puntuales |
 | `duration-base` | 300ms | Transiciones de UI por defecto |
 | `duration-slow` | 600ms | Transiciones de layout más notorias |
-| `duration-brush` | 1800ms | Ciclo completo del "pintado" de `BrushStroke` |
+| `duration-brush` | 4000ms | Ciclo completo del "pintado" de `BrushStroke` |
+| `delay-stagger` | 250ms | Retardo entre laptop y dashboard al entrar en el Hero |
 | `ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | Entradas — arranque rápido, llegada suave |
 | `ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Transiciones simétricas (aparece y desaparece) |
 
-El retraso de ~1s antes de que `BrushStroke` arranque (RF-2 del spec 001) no es un token: es un
+El retraso de ~0.5s antes de que `BrushStroke` arranque (RF-2 del spec 001) no es un token: es un
 valor por defecto de la prop `delay` del componente, no una constante de hoja de estilos.
 
 ## 6. Uso del logo
@@ -365,7 +366,8 @@ valor por defecto de la prop `delay` del componente, no una constante de hoja de
   --duration-fast: 150ms;
   --duration-base: 300ms;
   --duration-slow: 600ms;
-  --duration-brush: 1800ms;
+  --duration-brush: 4000ms;
+  --delay-stagger: 250ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }

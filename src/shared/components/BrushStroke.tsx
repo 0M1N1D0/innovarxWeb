@@ -10,6 +10,12 @@ interface BrushStrokeProps {
   delay?: number;
   /** Umbral de visibilidad del IntersectionObserver para considerar "entró en viewport". */
   threshold?: number;
+  /**
+   * Notifica cuando el pintado termina (`true`) o cuando el ciclo se rearma al
+   * salir del viewport (`false`) — ver spec 002 RF-2/RF-5. Opcional: los
+   * consumidores que no encadenan nada a la brocha no la necesitan.
+   */
+  onPaintedChange?: (painted: boolean) => void;
 }
 
 // Primer y único "use client" del proyecto (ver architecture.md §5). Vive en la hoja: Hero y
@@ -17,7 +23,12 @@ interface BrushStrokeProps {
 //
 // Puramente decorativo (RF-1): tamaño y posición son responsabilidad del consumidor vía
 // `className` — este componente no expone props de medidas.
-export function BrushStroke({ className, delay = 1000, threshold = 0.35 }: BrushStrokeProps) {
+export function BrushStroke({
+  className,
+  delay = 500,
+  threshold = 0.35,
+  onPaintedChange,
+}: BrushStrokeProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -55,6 +66,9 @@ export function BrushStroke({ className, delay = 1000, threshold = 0.35 }: Brush
             paintTimer = undefined;
           }
           setIsVisible(false);
+          // Rearme del ciclo (spec 002 RF-5): avisa al consumidor que ya no
+          // hay pintado vigente, para que también reponga su propio estado.
+          onPaintedChange?.(false);
         }
       },
       { threshold: [0, threshold] },
@@ -66,7 +80,7 @@ export function BrushStroke({ className, delay = 1000, threshold = 0.35 }: Brush
       if (paintTimer) clearTimeout(paintTimer);
       observer.disconnect();
     };
-  }, [delay, threshold]);
+  }, [delay, threshold, onPaintedChange]);
 
   return (
     <span ref={ref} aria-hidden="true" className={`${styles.wrapper} ${className ?? ""}`}>
@@ -76,6 +90,7 @@ export function BrushStroke({ className, delay = 1000, threshold = 0.35 }: Brush
         width={1200}
         height={486}
         priority
+        onAnimationEnd={() => onPaintedChange?.(true)}
         className={`${styles.stroke} ${isVisible ? styles.isVisible : ""}`}
       />
     </span>

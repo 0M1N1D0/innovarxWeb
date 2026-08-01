@@ -1,0 +1,94 @@
+/* Contexto de apilamiento de la columna visual: `isolation` evita que los z-index de la
+   laptop y el dashboard compitan con el header sticky. El alto ya no lo define `.brush`
+   (que ahora es absoluto, como las otras dos capas): `aspect-ratio` reserva el espacio
+   completo de la composición desde el primer render, sin layout shift (RNF de req-002 §3). */
+.visual {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 1.2 / 1;
+}
+
+.brush {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 130%;
+  max-width: none;
+  height: auto;
+}
+
+.laptop,
+.dashboard {
+  position: absolute;
+  height: auto;
+  opacity: 0;
+}
+
+.laptop {
+  width: 88%;
+  left: 0;
+  bottom: 6%;
+  z-index: 1;
+  filter: drop-shadow(var(--shadow-lg));
+}
+
+.dashboard {
+  width: 30%;
+  right: 2%;
+  bottom: -4%;
+  z-index: 2;
+  filter: drop-shadow(var(--shadow-lg));
+}
+
+@media (max-width: 900px) {
+  .visual {
+    aspect-ratio: 1.35 / 1;
+  }
+
+  .brush {
+    width: 100%;
+  }
+
+  .laptop {
+    width: 82%;
+  }
+
+  .dashboard {
+    width: 28%;
+  }
+}
+
+/* Entrada escalonada (RF-2/RF-3/RF-4): arranca solo cuando `painted` pasa a true
+   (BrushStroke terminó de pintarse), nunca antes ni junto con la brocha. */
+.isRevealed {
+  animation: reveal var(--duration-base) var(--ease-out) forwards;
+}
+
+.dashboard.isRevealed {
+  animation-delay: var(--delay-stagger);
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-3));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Spec 002 §5 — no es opcional: con reduced-motion la brocha nunca dispara
+   `animationend` (su propia animación ya está en `animation: none`), así que
+   `painted` se queda en `false` para siempre y el estado de React nunca revela
+   estas capas. La garantía real vive aquí, incondicional, igual que en
+   BrushStroke.module.css:55-64. */
+@media (prefers-reduced-motion: reduce) {
+  .laptop,
+  .dashboard {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
