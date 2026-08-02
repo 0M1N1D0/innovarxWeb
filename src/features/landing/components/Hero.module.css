@@ -3,7 +3,7 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
   gap: var(--space-7);
-  padding: var(--space-9) var(--space-5) var(--space-8);
+  padding: var(--space-7) var(--space-5) var(--space-8);
 }
 
 .content {
@@ -21,7 +21,7 @@
 }
 
 .eyebrow {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: var(--space-2);
   font-family: var(--font-mono);
@@ -30,7 +30,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-brand-indigo);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-2);
 }
 
 .eyebrow::before {

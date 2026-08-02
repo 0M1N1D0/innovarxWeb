@@ -19,7 +19,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <>
-      <Section>
+      <Section noTopPadding>
         <Hero />
       </Section>
       <Section id="servicios" tone="alt">

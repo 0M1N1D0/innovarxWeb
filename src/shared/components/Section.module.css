@@ -2,6 +2,10 @@
   padding: var(--space-9) var(--space-5);
 }
 
+.noTopPadding {
+  padding-top: var(--space-1);
+}
+
 .default {
   background: var(--color-white);
 }

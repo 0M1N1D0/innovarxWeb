@@ -14,8 +14,8 @@ export function Hero() {
   return (
     <div className={styles.hero}>
       <div className={styles.content}>
-        <p className={styles.eyebrow}>{t("eyebrow")}</p>
         <h1 className={styles.title}>
+          <span className={styles.eyebrow}>{t("eyebrow")}</span>
           {t.rich("title", {
             accent: (chunks) => <span className={styles.accent}>{chunks}</span>,
           })}
