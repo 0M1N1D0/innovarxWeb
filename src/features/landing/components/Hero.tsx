@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Button } from "@/shared/components/Button";
+import { HeroEyebrow } from "./HeroEyebrow";
 import { HeroVisual } from "./HeroVisual";
 import styles from "./Hero.module.css";
 
@@ -15,7 +16,7 @@ export function Hero() {
     <div className={styles.hero}>
       <div className={styles.content}>
         <h1 className={styles.title}>
-          <span className={styles.eyebrow}>{t("eyebrow")}</span>
+          <HeroEyebrow text={t("eyebrow")} />
           {t.rich("title", {
             accent: (chunks) => <span className={styles.accent}>{chunks}</span>,
           })}

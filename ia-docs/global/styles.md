@@ -191,11 +191,23 @@ un gesto deliberado, no un parpadeo.
 | `duration-reveal` | 3600ms | Barrido de revelado de laptop y dashboard del Hero (spec 002 RF-4 rev.) |
 | `delay-laptop` | 1000ms | Retardo entre el arranque del pintado de la brocha y el arranque de la laptop (spec 002 RF-2 rev.) |
 | `delay-stagger` | 250ms | Retardo entre laptop y dashboard al entrar en el Hero |
+| `duration-scramble` | 3500ms | Duración total del revoltijo del eyebrow del Hero (spec 003 RF-5, revisado dos veces — ver impl-003.md §8/§10) |
+| `interval-scramble` | 60ms | Cadencia de re-tirada de letras del revoltijo del eyebrow (spec 003, revisado dos veces) |
 | `ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | Entradas — arranque rápido, llegada suave |
 | `ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Transiciones simétricas (aparece y desaparece) |
 
 `BrushStroke` arranca su pintado de inmediato al entrar en viewport (prop `delay` del componente,
 default `0`) — no hay retraso previo, no es un token.
+
+**⚠ Consumo de estos tokens desde JS (no solo CSS):** el minificador de CSS (Lightning CSS, vía
+Turbopack) normaliza las unidades de tiempo al valor más corto al servir el build — `3500ms` llega
+al navegador como `3.5s`. `getComputedStyle(...).getPropertyValue(...)` devuelve ese string ya
+normalizado, así que un `parseFloat` directo sobre un token de tiempo interpreta `"3.5s"` como
+`3.5`, no `3500` — un bug silencioso que hace que cualquier timer derivado corra ~1000× más rápido
+de lo esperado. Todo consumo de un token de tiempo desde JS (no desde `animation`/`transition` en
+CSS, donde la unidad no importa) debe pasar por `cssTimeToMs` (`src/shared/lib/cssTime.ts`), nunca
+por `parseFloat` directo. Historial: este bug afectó al revoltijo del eyebrow del Hero — ver
+`ia-docs/specs/003-phrase-animation/impl-003.md` §12.
 
 ## 6. Uso del logo
 
@@ -368,8 +380,12 @@ default `0`) — no hay retraso previo, no es un token.
   --duration-fast: 150ms;
   --duration-base: 300ms;
   --duration-slow: 600ms;
-  --duration-brush: 4000ms;
+  --duration-brush: 3500ms;
+  --duration-reveal: 3600ms;
+  --delay-laptop: 1000ms;
   --delay-stagger: 250ms;
+  --duration-scramble: 3500ms;
+  --interval-scramble: 60ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
