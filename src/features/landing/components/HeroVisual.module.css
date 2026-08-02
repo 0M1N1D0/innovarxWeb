@@ -37,7 +37,6 @@
   right: 2%;
   bottom: -4%;
   z-index: 2;
-  filter: drop-shadow(var(--shadow-lg));
 }
 
 @media (max-width: 900px) {

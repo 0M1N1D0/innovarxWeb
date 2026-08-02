@@ -211,11 +211,11 @@ nuevo. La **Fase D (verificación)** corre al final, sobre el resultado completo
   real en vez de dejar que este documento reconstruyera el alfa desde un damero horneado. El
   derivado `app-dashboard-hero.png` pasó a generarse con un recorte simple al bbox (paso 4), sin
   ningún cálculo de amplitud ni fórmula de dos fondos.
-- **Desvío (2026-08-01) — sombra vía CSS, no horneada en el PNG:** la fuente re-exportada no
-  incluye la sombra suave del mockup (el cuerpo queda casi blanco, ~#fdfdff, apenas distinguible
-  del `--color-bg` del sitio sin ella). Se adoptó el plan B que el paso 3 original ya anticipaba:
-  `filter: drop-shadow(var(--shadow-lg))` en `.dashboard` (`HeroVisual.module.css`), igual
-  mecanismo que ya usa `.laptop`.
+- **Desvío (2026-08-01) — sin sombra en el dashboard:** la fuente re-exportada no incluye la
+  sombra suave del mockup (el cuerpo queda casi blanco, ~#fdfdff, apenas distinguible del
+  `--color-bg` del sitio sin ella). Se probó `filter: drop-shadow(var(--shadow-lg))` en
+  `.dashboard` (mismo mecanismo que `.laptop`) y se descartó por decisión explícita del usuario:
+  el mockup queda plano, sin sombra, apoyándose en el contraste que ya aporta la brocha detrás.
 - **Desvío (2026-08-01) — resolución por debajo de 2×:** el contenido real de la fuente
   re-exportada mide 273px de ancho; el despliegue máximo previsto del dashboard en el Hero es
   ~154px CSS (`width: 30%` de una columna visual de ~512px dentro del contenedor de 1120px), lo
