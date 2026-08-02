@@ -57,14 +57,20 @@
   }
 }
 
-/* Entrada escalonada (RF-2/RF-3/RF-4): arranca solo cuando `painted` pasa a true
-   (BrushStroke terminó de pintarse), nunca antes ni junto con la brocha. */
+/* Entrada escalonada (RF-2 rev./RF-3/RF-4): el ciclo arranca en cuanto `painting`
+   pasa a true (BrushStroke empieza a pintarse); la laptop espera `--delay-laptop`
+   desde ese momento, y el dashboard espera `--delay-stagger` más allá de la laptop
+   (no de la brocha), para conservar el escalonado de RF-3. */
 .isRevealed {
   animation: reveal var(--duration-base) var(--ease-out) forwards;
 }
 
+.laptop.isRevealed {
+  animation-delay: var(--delay-laptop);
+}
+
 .dashboard.isRevealed {
-  animation-delay: var(--delay-stagger);
+  animation-delay: calc(var(--delay-laptop) + var(--delay-stagger));
 }
 
 @keyframes reveal {
@@ -78,11 +84,11 @@
   }
 }
 
-/* Spec 002 §5 — no es opcional: con reduced-motion la brocha nunca dispara
-   `animationend` (su propia animación ya está en `animation: none`), así que
-   `painted` se queda en `false` para siempre y el estado de React nunca revela
-   estas capas. La garantía real vive aquí, incondicional, igual que en
-   BrushStroke.module.css:55-64. */
+/* Spec 002 §5 — no es opcional: con reduced-motion BrushStroke corta su propio
+   efecto antes de observar el viewport (ver BrushStroke.tsx), así que
+   `onPaintingChange` nunca se llama y `painting` se queda en `false` para
+   siempre — el estado de React nunca revela estas capas. La garantía real vive
+   aquí, incondicional, igual que en BrushStroke.module.css:55-64. */
 @media (prefers-reduced-motion: reduce) {
   .laptop,
   .dashboard {

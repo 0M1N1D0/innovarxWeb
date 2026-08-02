@@ -11,11 +11,11 @@ interface BrushStrokeProps {
   /** Umbral de visibilidad del IntersectionObserver para considerar "entró en viewport". */
   threshold?: number;
   /**
-   * Notifica cuando el pintado termina (`true`) o cuando el ciclo se rearma al
+   * Notifica cuando el pintado arranca (`true`) o cuando el ciclo se rearma al
    * salir del viewport (`false`) — ver spec 002 RF-2/RF-5. Opcional: los
    * consumidores que no encadenan nada a la brocha no la necesitan.
    */
-  onPaintedChange?: (painted: boolean) => void;
+  onPaintingChange?: (painting: boolean) => void;
 }
 
 // Primer y único "use client" del proyecto (ver architecture.md §5). Vive en la hoja: Hero y
@@ -25,9 +25,9 @@ interface BrushStrokeProps {
 // `className` — este componente no expone props de medidas.
 export function BrushStroke({
   className,
-  delay = 500,
+  delay = 0,
   threshold = 0.35,
-  onPaintedChange,
+  onPaintingChange,
 }: BrushStrokeProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -58,6 +58,10 @@ export function BrushStroke({
           if (paintTimer) return;
           paintTimer = setTimeout(() => {
             setIsVisible(true);
+            // Spec 002 RF-2 (rev.): el consumidor se engancha al arranque del
+            // pintado, no a su fin — laptop/dashboard entran en simultáneo con
+            // la brocha en vez de esperar a que termine.
+            onPaintingChange?.(true);
             paintTimer = undefined;
           }, delay);
         } else if (!entry.isIntersecting) {
@@ -68,7 +72,7 @@ export function BrushStroke({
           setIsVisible(false);
           // Rearme del ciclo (spec 002 RF-5): avisa al consumidor que ya no
           // hay pintado vigente, para que también reponga su propio estado.
-          onPaintedChange?.(false);
+          onPaintingChange?.(false);
         }
       },
       { threshold: [0, threshold] },
@@ -80,7 +84,7 @@ export function BrushStroke({
       if (paintTimer) clearTimeout(paintTimer);
       observer.disconnect();
     };
-  }, [delay, threshold, onPaintedChange]);
+  }, [delay, threshold, onPaintingChange]);
 
   return (
     <span ref={ref} aria-hidden="true" className={`${styles.wrapper} ${className ?? ""}`}>
@@ -90,7 +94,6 @@ export function BrushStroke({
         width={1200}
         height={486}
         priority
-        onAnimationEnd={() => onPaintedChange?.(true)}
         className={`${styles.stroke} ${isVisible ? styles.isVisible : ""}`}
       />
     </span>

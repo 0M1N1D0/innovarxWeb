@@ -11,21 +11,23 @@ import styles from "./HeroVisual.module.css";
 // solo importan y renderizan este componente.
 //
 // Orquesta las tres capas por delante de la brocha: laptop y dashboard
-// arrancan su entrada únicamente cuando `BrushStroke` termina de pintarse
-// (RF-2), escalonadas vía `--delay-stagger` en CSS (RF-3).
+// arrancan su entrada en simultáneo con el pintado de `BrushStroke` (RF-2 rev.,
+// ya no esperan a que termine), escalonadas entre sí vía `--delay-stagger` en
+// CSS (RF-3).
 export function HeroVisual() {
-  const [painted, setPainted] = useState(false);
+  const [painting, setPainting] = useState(false);
 
   return (
     <div className={styles.visual}>
-      <BrushStroke className={styles.brush} onPaintedChange={setPainted} />
+      <BrushStroke className={styles.brush} onPaintingChange={setPainting} />
       <Image
         src="/images/laptop-hero.png"
         alt=""
         aria-hidden="true"
         width={1400}
         height={1098}
-        className={`${styles.laptop} ${painted ? styles.isRevealed : ""}`}
+        priority
+        className={`${styles.laptop} ${painting ? styles.isRevealed : ""}`}
       />
       <Image
         src="/images/app-dashboard-hero.png"
@@ -33,7 +35,8 @@ export function HeroVisual() {
         aria-hidden="true"
         width={293}
         height={595}
-        className={`${styles.dashboard} ${painted ? styles.isRevealed : ""}`}
+        priority
+        className={`${styles.dashboard} ${painting ? styles.isRevealed : ""}`}
       />
     </div>
   );

@@ -187,13 +187,14 @@ un gesto deliberado, no un parpadeo.
 | `duration-fast` | 150ms | Hover, focus, transiciones de UI puntuales |
 | `duration-base` | 300ms | Transiciones de UI por defecto |
 | `duration-slow` | 600ms | Transiciones de layout más notorias |
-| `duration-brush` | 4000ms | Ciclo completo del "pintado" de `BrushStroke` |
+| `duration-brush` | 3500ms | Ciclo completo del "pintado" de `BrushStroke` |
+| `delay-laptop` | 1000ms | Retardo entre el arranque del pintado de la brocha y el arranque de la laptop (spec 002 RF-2 rev.) |
 | `delay-stagger` | 250ms | Retardo entre laptop y dashboard al entrar en el Hero |
 | `ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | Entradas — arranque rápido, llegada suave |
 | `ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Transiciones simétricas (aparece y desaparece) |
 
-El retraso de ~0.5s antes de que `BrushStroke` arranque (RF-2 del spec 001) no es un token: es un
-valor por defecto de la prop `delay` del componente, no una constante de hoja de estilos.
+`BrushStroke` arranca su pintado de inmediato al entrar en viewport (prop `delay` del componente,
+default `0`) — no hay retraso previo, no es un token.
 
 ## 6. Uso del logo
 
