@@ -188,6 +188,7 @@ un gesto deliberado, no un parpadeo.
 | `duration-base` | 300ms | Transiciones de UI por defecto |
 | `duration-slow` | 600ms | Transiciones de layout más notorias |
 | `duration-brush` | 3500ms | Ciclo completo del "pintado" de `BrushStroke` |
+| `duration-reveal` | 3600ms | Barrido de revelado de laptop y dashboard del Hero (spec 002 RF-4 rev.) |
 | `delay-laptop` | 1000ms | Retardo entre el arranque del pintado de la brocha y el arranque de la laptop (spec 002 RF-2 rev.) |
 | `delay-stagger` | 250ms | Retardo entre laptop y dashboard al entrar en el Hero |
 | `ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | Entradas — arranque rápido, llegada suave |
