@@ -582,3 +582,28 @@ que el bundle JS servido ya contiene `cssTimeToMs` compilado. Los pasos 14–18 
 (revoltijo en vivo, orden aleatorio, regresión de brocha/laptop/dashboard, scroll parcial,
 `prefers-reduced-motion`, árbol de accesibilidad) siguen pendientes de una pasada manual en
 navegador — misma limitación de esta máquina ya declarada en §8.
+
+## 13. Generalización a `HackerText` (2026-08-02)
+
+`HeroEyebrow.tsx`/`.module.css` **ya no existen**. A pedido del usuario, el revoltijo de esta
+spec se generalizó en `HackerText` (`src/shared/components/HackerText.tsx`+`.module.css`,
+documentado en `ia-docs/global/styles.md` §5.5): mismo mecanismo de §11/§12 (contador de
+iteración + `buildRevealRanks` + `cssTimeToMs`), con `text`, `duration`, `interval` y `alphabet`
+como props en vez de estar implícitos en el eyebrow del Hero. `scramble.ts` ganó un parámetro
+`alphabet` opcional en `randomLetter` (default `DEFAULT_ALPHABET`, el mismo A–Z de siempre);
+`buildRevealRanks` no cambió.
+
+`Hero.tsx` monta el componente directo, sin un `HeroEyebrow` de dominio intermedio (mismo
+criterio que `001-brush-animated-large/impl-001.md` §12 aplicó a la brocha):
+
+```tsx
+<HackerText text={t("eyebrow")} className={styles.eyebrow} />
+```
+
+`.eyebrow`/`.eyebrow::before` (el punto rosa, la tipografía, el color — RNF §3, no forman parte
+de la animación) volvieron a `Hero.module.css`; `HackerText.module.css` conserva solo `.srOnly`
+(accesibilidad genérica). `--duration-scramble`/`--interval-scramble` se renombraron a
+`--duration-hacker-text`/`--interval-hacker-text` (defaults de la animación genérica, ya no
+nombres atados al eyebrow). RF-1 a RF-9 y §5 de `req-003.md` (accesibilidad/reduced-motion)
+siguen vigentes sin cambio de comportamiento. Detalle completo del rediseño en
+`ia-docs/global/styles.md` §5.5.

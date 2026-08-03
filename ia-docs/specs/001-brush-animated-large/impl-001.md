@@ -220,3 +220,27 @@ siendo Server Components).
 - **El PSD/PNG fuente aportado por el usuario** (`imagen-brocha-2.png`, 1536×1024, del que se
   recortó `brush-stroke-large.png`) no quedó versionado en `public/images/` — solo el resultado ya
   recortado y comprimido.
+
+## 12. Generalización a `ImageAnimation` (2026-08-02)
+
+`BrushStroke.tsx`/`.module.css` **ya no existen**. A pedido del usuario, el "pintado" de esta
+spec y el revelado de laptop/dashboard de `002-image-animated-hero/` (que usaban la misma técnica
+de barrido de máscara, duplicada en dos archivos) se generalizaron en un solo componente
+reutilizable: `ImageAnimation` (`src/shared/components/ImageAnimation.tsx`+`.module.css`,
+documentado en `ia-docs/global/styles.md` §5.5). El montaje de esta spec en el Hero pasó a:
+
+```tsx
+<ImageAnimation
+  src="/images/brush-stroke-large.png" alt="" width={1200} height={486} priority
+  direction="diagonal" duration="var(--duration-brush)"
+  className={styles.brush} onRevealChange={setPainting}
+/>
+```
+
+Todo lo certificado en §10 de este documento sigue vigente sin cambio de comportamiento — RF-1 a
+RF-5 y la accesibilidad/`prefers-reduced-motion` de §6/§7 son ahora responsabilidad de
+`ImageAnimation`, con la misma técnica (mismo ángulo 248deg, mismo `mask-size`, mismo
+`useViewportCycle` para RF-2/RF-3/RF-4). No quedó un componente `BrushStroke` de dominio: el
+consumidor (`HeroVisual.tsx`) describe el PNG de la brocha directamente, mismo criterio que ya
+usaba para laptop/dashboard. Detalle completo del rediseño y su tabla de props en
+`ia-docs/global/styles.md` §5.5.

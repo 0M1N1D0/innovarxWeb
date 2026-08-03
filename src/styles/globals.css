@@ -20,10 +20,10 @@ body {
   font-size: var(--text-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  /* La columna visual del Hero (BrushStroke, y la laptop/app de una próxima entrega)
-     sangra fuera de su contenedor a propósito. `clip` recorta el desborde sin crear un
-     contenedor de scroll — a diferencia de `hidden`, no rompe el `position: sticky` del
-     SiteHeader. */
+  /* La columna visual del Hero (brocha, laptop y dashboard, animadas con
+     `ImageAnimation` — ver ia-docs/global/styles.md) sangra fuera de su contenedor a
+     propósito. `clip` recorta el desborde sin crear un contenedor de scroll — a
+     diferencia de `hidden`, no rompe el `position: sticky` del SiteHeader. */
   overflow-x: clip;
 }
 

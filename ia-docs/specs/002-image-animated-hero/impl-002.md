@@ -232,3 +232,34 @@ nuevo. La **Fase D (verificación)** corre al final, sobre el resultado completo
 - **Los originales `imagen_laptop.png` / `imagen_app_dashboard.png`** quedan en el repo sin usar
   tras esta entrega, igual que `imagen-brocha-1.png` quedó tras req-001 — no se referencian desde
   ningún componente, se conservan como fuente.
+
+## 7. Generalización a `ImageAnimation` (2026-08-02)
+
+El barrido de máscara + revelado de laptop/dashboard (RF-2 a RF-6 de esta spec, implementado en
+el paso 17 como `.laptop`/`.dashboard`/`@keyframes reveal` inline en `HeroVisual.module.css`) se
+generalizó a pedido del usuario en `ImageAnimation` (`src/shared/components/ImageAnimation.tsx`+
+`.module.css`, documentado en `ia-docs/global/styles.md` §5.5) — el mismo componente que ahora
+también monta la brocha de `001-brush-animated-large/` (ver su `impl-001.md` §12). Ya no hay CSS
+de máscara/keyframes en `HeroVisual.module.css`: ese archivo conserva solo tamaño y posición
+(`.visual`/`.brush`/`.laptop`/`.dashboard` como `position`/`width`/`z-index`/`filter`).
+
+`HeroVisual.tsx` pasó a montar tres `<ImageAnimation>`, laptop y dashboard en **modo controlado**
+(`active={painting}`, el mismo estado que antes alimentaba `.isRevealed`):
+
+```tsx
+<ImageAnimation
+  src="/images/laptop-hero.png" alt="" width={1400} height={1098} priority
+  direction="left-to-right" fade
+  duration="var(--duration-image-animation)" delay="var(--delay-laptop)"
+  className={styles.laptop} active={painting}
+/>
+```
+
+`--duration-reveal` se renombró a `--duration-image-animation` (default de la animación
+genérica, no ya un nombre atado a "revelado del Hero"); `--delay-laptop`/`--delay-stagger` no
+cambiaron de nombre — siguen siendo calibraciones específicas de estas dos instancias, pasadas
+explícitas por la prop `delay`. RF-1 a RF-7 y §5 de este documento (accesibilidad/
+`prefers-reduced-motion`) siguen vigentes sin cambio de comportamiento — la garantía de reduced-
+motion es ahora responsabilidad de `ImageAnimation.module.css`, incondicional en CSS, mismo
+criterio que ya exigía esta spec. Detalle completo del rediseño en `ia-docs/global/styles.md`
+§5.5.

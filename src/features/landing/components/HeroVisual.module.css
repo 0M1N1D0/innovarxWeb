@@ -1,7 +1,12 @@
 /* Contexto de apilamiento de la columna visual: `isolation` evita que los z-index de la
    laptop y el dashboard compitan con el header sticky. El alto ya no lo define `.brush`
    (que ahora es absoluto, como las otras dos capas): `aspect-ratio` reserva el espacio
-   completo de la composición desde el primer render, sin layout shift (RNF de req-002 §3). */
+   completo de la composición desde el primer render, sin layout shift (RNF de req-002 §3).
+
+   La animación en sí (barrido de máscara, revelado, keyframes) vive en
+   `src/shared/components/ImageAnimation.module.css` (spec "image-animation" reutilizable,
+   ver ia-docs/global/styles.md) — acá solo queda tamaño y posición de cada capa dentro de
+   esta composición concreta, aplicado vía el prop `className` de `ImageAnimation`. */
 .visual {
   position: relative;
   isolation: isolate;
@@ -21,7 +26,6 @@
 .dashboard {
   position: absolute;
   height: auto;
-  opacity: 0;
 }
 
 .laptop {
@@ -30,23 +34,6 @@
   bottom: 6%;
   z-index: 1;
   filter: drop-shadow(var(--shadow-lg));
-
-  /* Barrido de revelado izquierda → derecha (RF-4 rev.), misma técnica que
-   * `BrushStroke.module.css:27-34` pero en sentido opuesto: mask-image estático (90deg,
-   * negro a la izquierda) + mask-position animado — mask-image no es interpolable, por
-   * eso el barrido se logra moviendo la posición, no los stops del gradiente. Los stops
-   * #000/transparent son canal alfa de la máscara, no color: no cuentan como el literal
-   * hex que prohíbe CLAUDE.md (mismo argumento que en BrushStroke.module.css:15-17).
-   * mask-size 400% + reposo en mask-position 100% deja el elemento entero en zona
-   * transparente del gradiente; animar a 0% lo barre completo hasta zona sólida. */
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 38%, transparent 62%);
-  mask-image: linear-gradient(90deg, #000 0%, #000 38%, transparent 62%);
-  -webkit-mask-size: 400% 100%;
-  mask-size: 400% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: 100% 0%;
-  mask-position: 100% 0%; /* reposo = sin revelar */
 }
 
 .dashboard {
@@ -54,18 +41,6 @@
   right: 2%;
   bottom: -4%;
   z-index: 2;
-
-  /* Barrido de revelado arriba → abajo, misma técnica que `.laptop` (ver comentario ahí)
-   * pero en el eje vertical: mask-size 400% en Y, gradiente 180deg (negro arriba,
-   * transparente abajo) y mask-position animado en Y en vez de en X. */
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 38%, transparent 62%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 38%, transparent 62%);
-  -webkit-mask-size: 100% 400%;
-  mask-size: 100% 400%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: 0% 100%;
-  mask-position: 0% 100%; /* reposo = sin revelar */
 }
 
 @media (max-width: 900px) {
@@ -83,77 +58,5 @@
 
   .dashboard {
     width: 28%;
-  }
-}
-
-/* Entrada escalonada (RF-2 rev./RF-3/RF-4): el ciclo arranca en cuanto `painting`
-   pasa a true (BrushStroke empieza a pintarse). Laptop y dashboard se revelan con
-   el mismo barrido de máscara (definido en `.laptop`/`.dashboard` arriba), cada uno
-   en su eje: la laptop de izquierda a derecha, el dashboard de arriba hacia abajo.
-   La laptop espera `--delay-laptop` desde ese momento; el dashboard espera
-   `--delay-stagger` más allá de la laptop (no de la brocha), para conservar el
-   escalonado de RF-3. */
-.laptop.isRevealed {
-  animation: revealSweep var(--duration-reveal) var(--ease-out) var(--delay-laptop) forwards;
-}
-
-.dashboard.isRevealed {
-  animation: revealSweepDown var(--duration-reveal) var(--ease-out)
-    calc(var(--delay-laptop) + var(--delay-stagger)) forwards;
-}
-
-/* opacity ya en 1 en los dos extremos de ambos keyframes: el fade global lo maneja
-   `.laptop, .dashboard { opacity: 0; }` de reposo + `forwards`; acá solo se anima la
-   máscara, para que el barrido sea lo único que revela la imagen. */
-@keyframes revealSweep {
-  from {
-    opacity: 1;
-    transform: translateY(var(--space-3));
-    -webkit-mask-position: 100% 0%;
-    mask-position: 100% 0%;
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    -webkit-mask-position: 0% 0%;
-    mask-position: 0% 0%;
-  }
-}
-
-@keyframes revealSweepDown {
-  from {
-    opacity: 1;
-    transform: translateY(var(--space-3));
-    -webkit-mask-position: 0% 100%;
-    mask-position: 0% 100%;
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    -webkit-mask-position: 0% 0%;
-    mask-position: 0% 0%;
-  }
-}
-
-/* Spec 002 §5 — no es opcional: con reduced-motion BrushStroke corta su propio
-   efecto antes de observar el viewport (ver BrushStroke.tsx), así que
-   `onPaintingChange` nunca se llama y `painting` se queda en `false` para
-   siempre — el estado de React nunca revela estas capas. La garantía real vive
-   aquí, incondicional, igual que en BrushStroke.module.css:55-64. */
-@media (prefers-reduced-motion: reduce) {
-  .laptop,
-  .dashboard {
-    opacity: 1;
-    transform: none;
-    animation: none;
-  }
-
-  /* Sin esto, laptop y dashboard quedarían igual invisibles: la máscara de reposo
-   * (definida arriba en cada uno) los oculta y con `animation: none` ninguna
-   * animación llega a barrerlos. Mismo patrón que BrushStroke.module.css:55-64. */
-  .laptop,
-  .dashboard {
-    -webkit-mask-image: none;
-    mask-image: none;
   }
 }

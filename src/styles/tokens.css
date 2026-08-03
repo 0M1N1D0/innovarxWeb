@@ -88,11 +88,11 @@
   --duration-base: 300ms;
   --duration-slow: 600ms;
   --duration-brush: 3500ms;
-  --duration-reveal: 3600ms;
+  --duration-image-animation: 3600ms;
   --delay-laptop: 1000ms;
   --delay-stagger: 250ms;
-  --duration-scramble: 3500ms;
-  --interval-scramble: 60ms;
+  --duration-hacker-text: 3500ms;
+  --interval-hacker-text: 60ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }

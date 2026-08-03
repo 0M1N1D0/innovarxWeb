@@ -1,0 +1,161 @@
+/* "image-animation" (ia-docs/global/styles.md): barrido de máscara + revelado opcional con
+   desplazamiento de entrada. Generaliza `BrushStroke.module.css` (spec 001, solo barrido
+   diagonal) y las reglas `.laptop`/`.dashboard` que antes vivían en `HeroVisual.module.css`
+   (spec 002, barrido + `translateY`) en una sola animación parametrizada por `direction` y
+   `fade`. Tamaño/posición siguen siendo responsabilidad del consumidor vía `className`
+   (mismo criterio que ya usaba `BrushStroke`) — este archivo solo define la animación. */
+.wrapper {
+  display: block;
+  line-height: 0;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Resting state: la imagen entra en `opacity: 0` cuando `fade` está activo (laptop/
+   dashboard). Sin `fade` (brocha), la imagen es visible desde el primer fotograma — solo
+   la máscara está sin barrer. */
+.fade {
+  opacity: 0;
+}
+
+/*
+ * Los tres `direction` comparten técnica (máscara lineal + `mask-position` animado; el
+ * mask-image en sí no es interpolable, por eso el barrido se logra moviendo la posición, no
+ * los stops del gradiente — ver BrushStroke.module.css:11-26 de la spec 001 original para
+ * el razonamiento completo). Los stops #000/transparent son el canal alfa de la máscara, no
+ * color visible: no cuentan como el literal hex que prohíbe CLAUDE.md para stylesheets.
+ *
+ * `diagonal` (248deg, mask-size 400%×400%): "pintado" de la brocha, cabeza gruesa (derecha)
+ * a cola fina (izquierda). El ángulo y el sentido en que se desliza `mask-position` están
+ * acoplados — invertir uno sin el otro invierte qué estado es "reposo" y cuál "pintado".
+ *
+ * `left-to-right` (90deg, mask-size 400%×100%): revelado horizontal (laptop del Hero).
+ * `top-to-bottom` (180deg, mask-size 100%×400%): revelado vertical (dashboard del Hero).
+ */
+.diagonal {
+  -webkit-mask-image: linear-gradient(248deg, #000 0%, #000 38%, transparent 62%);
+  mask-image: linear-gradient(248deg, #000 0%, #000 38%, transparent 62%);
+  -webkit-mask-size: 400% 400%;
+  mask-size: 400% 400%;
+  -webkit-mask-position: 0% 0%;
+  mask-position: 0% 0%; /* reposo = sin pintar */
+}
+
+.leftToRight {
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 38%, transparent 62%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 38%, transparent 62%);
+  -webkit-mask-size: 400% 100%;
+  mask-size: 400% 100%;
+  -webkit-mask-position: 100% 0%;
+  mask-position: 100% 0%; /* reposo = sin revelar */
+}
+
+.topToBottom {
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 38%, transparent 62%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 38%, transparent 62%);
+  -webkit-mask-size: 100% 400%;
+  mask-size: 100% 400%;
+  -webkit-mask-position: 0% 100%;
+  mask-position: 0% 100%; /* reposo = sin revelar */
+}
+
+/* `duration`/`delay` llegan por `style` inline (props del componente) cuando el consumidor
+   los pasa — el inline style siempre gana sobre estos defaults, que solo cubren el caso sin
+   override. `animation-name` se decide por dirección (una regla por combinación, mismo
+   patrón de especificidad que la guarda de reduced-motion más abajo necesita igualar). */
+.isActive {
+  animation-timing-function: var(--ease-out);
+  animation-duration: var(--duration-image-animation);
+  animation-delay: 0ms;
+  animation-fill-mode: forwards;
+}
+
+.isActive.diagonal {
+  animation-name: paintDiagonal;
+}
+
+.isActive.leftToRight {
+  animation-name: revealLeftToRight;
+}
+
+.isActive.topToBottom {
+  animation-name: revealTopToBottom;
+}
+
+@keyframes paintDiagonal {
+  from {
+    -webkit-mask-position: 0% 0%;
+    mask-position: 0% 0%;
+  }
+  to {
+    -webkit-mask-position: 100% 100%;
+    mask-position: 100% 100%;
+  }
+}
+
+/* opacity ya en 1 en ambos extremos: con `fade`, el fade lo maneja `.fade{opacity:0}` de
+   reposo + `animation-fill-mode: forwards` (la opacidad salta a 1 en cuanto arranca el
+   ciclo); sin `fade`, no hay `.fade` en el reposo, así que este `opacity:1` es un no-op. El
+   barrido de máscara es lo único que realmente se anima frame a frame en `opacity`; lo que
+   sí se anima siempre es `transform`, con el mismo razonamiento (translateY no introduce
+   movimiento si el consumidor no usa `fade`, porque la posición de reposo ya es la misma). */
+@keyframes revealLeftToRight {
+  from {
+    opacity: 1;
+    transform: translateY(var(--space-3));
+    -webkit-mask-position: 100% 0%;
+    mask-position: 100% 0%;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-mask-position: 0% 0%;
+    mask-position: 0% 0%;
+  }
+}
+
+@keyframes revealTopToBottom {
+  from {
+    opacity: 1;
+    transform: translateY(var(--space-3));
+    -webkit-mask-position: 0% 100%;
+    mask-position: 0% 100%;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-mask-position: 0% 0%;
+    mask-position: 0% 0%;
+  }
+}
+
+/* No es opcional (spec 001 §7 / spec 002 §5): con reduced-motion, la imagen se ve completa
+   de inmediato y no se anima en ningún scroll. La garantía real vive acá, incondicional —
+   el short-circuit de `useViewportCycle` (modo no controlado) solo evita observar de más;
+   en modo controlado, un consumidor podría pasar `active=true` sin pasar por ese short-
+   circuit, así que esta guarda de CSS es la única que no depende de cómo llegó `active`.
+   Selectores igualados en especificidad a las reglas que anulan (`.isActive.<direction>`) y
+   declarados al final del archivo: a igual especificidad, gana el que aparece último — el
+   mismo criterio que ya usaban BrushStroke.module.css/HeroVisual.module.css. */
+@media (prefers-reduced-motion: reduce) {
+  .image {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .isActive.diagonal,
+  .isActive.leftToRight,
+  .isActive.topToBottom {
+    animation: none;
+  }
+
+  .fade {
+    opacity: 1;
+  }
+}

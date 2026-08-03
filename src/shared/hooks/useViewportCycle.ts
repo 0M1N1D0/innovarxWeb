@@ -7,6 +7,13 @@ interface UseViewportCycleOptions {
   delay?: number;
   /** Umbral de visibilidad del IntersectionObserver para considerar "entró en viewport". */
   threshold?: number;
+  /**
+   * Si es `false`, el hook no instala ningún `IntersectionObserver` — para consumidores
+   * que pueden operar en modo "controlado" (reciben su estado de activación por prop en
+   * vez de observar su propio viewport, ej. `ImageAnimation` con `active` explícito) y no
+   * deben pagar el costo de un observer que nunca van a usar. Default `true`.
+   */
+  enabled?: boolean;
 }
 
 interface UseViewportCycleResult<T extends HTMLElement> {
@@ -14,18 +21,22 @@ interface UseViewportCycleResult<T extends HTMLElement> {
   active: boolean;
 }
 
-// Extraído de BrushStroke.tsx (spec 001 RF-2/RF-3/RF-4): histéresis de dos umbrales sobre
-// IntersectionObserver para disparar/re-disparar un ciclo de animación sin parpadeo en
-// scrolls parciales o erráticos. `BrushStroke` y `HeroEyebrow` (spec 003) lo comparten —
-// primer archivo de `shared/hooks/`, carpeta ya prevista en architecture.md §3.
+// Extraído originalmente de BrushStroke.tsx (spec 001 RF-2/RF-3/RF-4): histéresis de dos
+// umbrales sobre IntersectionObserver para disparar/re-disparar un ciclo de animación sin
+// parpadeo en scrolls parciales o erráticos. Hoy lo comparten los dos componentes
+// reutilizables de `ia-docs/global/styles.md` — `ImageAnimation` (modo no controlado) y
+// `HackerText` — primer archivo de `shared/hooks/`, carpeta ya prevista en
+// architecture.md §3.
 export function useViewportCycle<T extends HTMLElement>({
   delay = 0,
   threshold = 0.35,
+  enabled = true,
 }: UseViewportCycleOptions = {}): UseViewportCycleResult<T> {
   const ref = useRef<T>(null);
   const [active, setActive] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
     const el = ref.current;
     if (!el) return;
 
@@ -70,7 +81,7 @@ export function useViewportCycle<T extends HTMLElement>({
       if (timer) clearTimeout(timer);
       observer.disconnect();
     };
-  }, [delay, threshold]);
+  }, [delay, threshold, enabled]);
 
   return { ref, active };
 }

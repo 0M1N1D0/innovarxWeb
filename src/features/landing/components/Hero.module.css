@@ -25,6 +25,32 @@
   font-weight: 600;
 }
 
+/* Estilo visual del eyebrow (dominio de `Hero`, no de la animación): la tipografía, el
+   color y el punto rosa son propios de este componente. `HackerText`
+   (`src/shared/components/HackerText.tsx`, "hacker-text-animation" reutilizable — ver
+   ia-docs/global/styles.md) solo anima el `text` que se le pasa; el `className={styles
+   .eyebrow}` es lo que le da esta apariencia. */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-brand-indigo);
+  margin-bottom: var(--space-2);
+}
+
+.eyebrow::before {
+  content: "";
+  width: var(--space-1);
+  height: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-pink);
+}
+
 .accent {
   background-image: var(--gradient-brand-x);
   background-clip: text;

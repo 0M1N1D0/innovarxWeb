@@ -187,17 +187,20 @@ un gesto deliberado, no un parpadeo.
 | `duration-fast` | 150ms | Hover, focus, transiciones de UI puntuales |
 | `duration-base` | 300ms | Transiciones de UI por defecto |
 | `duration-slow` | 600ms | Transiciones de layout más notorias |
-| `duration-brush` | 3500ms | Ciclo completo del "pintado" de `BrushStroke` |
-| `duration-reveal` | 3600ms | Barrido de revelado de laptop y dashboard del Hero (spec 002 RF-4 rev.) |
-| `delay-laptop` | 1000ms | Retardo entre el arranque del pintado de la brocha y el arranque de la laptop (spec 002 RF-2 rev.) |
-| `delay-stagger` | 250ms | Retardo entre laptop y dashboard al entrar en el Hero |
-| `duration-scramble` | 3500ms | Duración total del revoltijo del eyebrow del Hero (spec 003 RF-5, revisado dos veces — ver impl-003.md §8/§10) |
-| `interval-scramble` | 60ms | Cadencia de re-tirada de letras del revoltijo del eyebrow (spec 003, revisado dos veces) |
+| `duration-brush` | 3500ms | Calibración específica del Hero: duración del "pintado" de la brocha (`ImageAnimation` con `direction="diagonal"`) — más lenta que el default genérico, pasada explícita vía prop `duration` |
+| `duration-image-animation` | 3600ms | Default de `duration` en `image-animation` (§5.5) — usado tal cual por laptop y dashboard del Hero |
+| `delay-laptop` | 1000ms | Calibración del Hero: retardo entre el arranque del pintado de la brocha y el arranque de la laptop (spec 002 RF-2 rev.), pasado vía prop `delay` de `image-animation` |
+| `delay-stagger` | 250ms | Calibración del Hero: retardo entre laptop y dashboard al entrar en el Hero, sumado a `delay-laptop` vía `calc()` en la prop `delay` del dashboard |
+| `duration-hacker-text` | 3500ms | Default de `duration` en `hacker-text-animation` (§5.5) — duración total del revoltijo (spec 003 RF-5, revisado tres veces — ver impl-003.md §8/§10/§11) |
+| `interval-hacker-text` | 60ms | Default de `interval` en `hacker-text-animation` — cadencia de re-tirada de letras (spec 003, revisado tres veces) |
 | `ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | Entradas — arranque rápido, llegada suave |
 | `ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Transiciones simétricas (aparece y desaparece) |
 
-`BrushStroke` arranca su pintado de inmediato al entrar en viewport (prop `delay` del componente,
-default `0`) — no hay retraso previo, no es un token.
+`duration-brush`/`delay-laptop`/`delay-stagger` no son valores por defecto de una animación
+genérica — son calibraciones de las tres instancias concretas del Hero, pasadas explícitas por
+prop en `HeroVisual.tsx`. `duration-image-animation`/`duration-hacker-text`/
+`interval-hacker-text` sí son defaults: se usan automáticamente si el consumidor no pasa la prop
+correspondiente. Ver §5.5 para el catálogo completo de props de cada animación.
 
 **⚠ Consumo de estos tokens desde JS (no solo CSS):** el minificador de CSS (Lightning CSS, vía
 Turbopack) normaliza las unidades de tiempo al valor más corto al servir el build — `3500ms` llega
@@ -208,6 +211,89 @@ de lo esperado. Todo consumo de un token de tiempo desde JS (no desde `animation
 CSS, donde la unidad no importa) debe pasar por `cssTimeToMs` (`src/shared/lib/cssTime.ts`), nunca
 por `parseFloat` directo. Historial: este bug afectó al revoltijo del eyebrow del Hero — ver
 `ia-docs/specs/003-phrase-animation/impl-003.md` §12.
+
+### 5.5 Animaciones reutilizables
+
+Las tres animaciones del Hero (specs 001/002/003) se generalizaron en dos componentes de
+`src/shared/components/`, para poder aplicarse a cualquier texto o imagen futura sin duplicar
+lógica. Ninguna introduce una librería de animación (GSAP, Framer Motion) — mismo argumento que
+ya sentaron req-001 §4, req-002 §3 y req-003 §3: JS simple (`setInterval`/`IntersectionObserver`)
+o CSS (`@keyframes`/`mask`) alcanza.
+
+#### `hacker-text-animation` — `HackerText`
+
+Revoltijo de letras que se van fijando en orden aleatorio hasta revelar un texto — efecto
+"scramble text"/"hacker text": un contador de iteración avanza por tick y cada posición se fija
+en cuanto le toca su turno (barajado). Generaliza el revoltijo del eyebrow del Hero
+(`ia-docs/specs/003-phrase-animation/`).
+
+```tsx
+<HackerText text={t("eyebrow")} className={styles.eyebrow} />
+```
+
+| Prop | Tipo | Requerido | Default | Nota |
+|---|---|---|---|---|
+| `text` | `string` | sí | — | El texto a revelar |
+| `className` | `string` | no | — | Estilo visual (tipografía, color, layout) — el componente no impone ninguno |
+| `duration` | `number` (ms) | no | `--duration-hacker-text` | Duración total del ciclo |
+| `interval` | `number` (ms) | no | `--interval-hacker-text` | Cadencia de re-tirada de letras |
+| `alphabet` | `string` | no | `"ABCDEFGHIJKLMNOPQRSTUVWXYZ"` | Alfabeto del revoltijo |
+| `delay` | `number` (ms) | no | `0` | Espera tras entrar en viewport antes de arrancar |
+| `threshold` | `number` | no | `0.35` | Umbral de visibilidad del `IntersectionObserver` |
+
+`duration`/`interval` son numéricos porque el revoltijo es un timer de JS (`setInterval`), no una
+animación CSS — el default se lee del token vía `cssTimeToMs` (§5.4 ⚠), nunca por `parseFloat`
+directo. El nombre accesible expuesto a lectores de pantalla es siempre el texto completo y
+correcto, nunca un estado intermedio del revoltijo (texto visualmente oculto en paralelo al nodo
+animado, que lleva `aria-hidden`). Con `prefers-reduced-motion: reduce`, el texto se muestra
+resuelto de inmediato, sin ciclo.
+
+#### `image-animation` — `ImageAnimation`
+
+Barrido de máscara sobre una imagen, con revelado opcional (`fade`) que además la hace entrar con
+un desplazamiento vertical corto. Generaliza el "pintado" de la brocha del Hero
+(`ia-docs/specs/001-brush-animated-large/`) y el revelado de laptop/dashboard
+(`ia-docs/specs/002-image-animated-hero/`) — misma técnica, antes separada en dos lugares
+distintos del código.
+
+```tsx
+<ImageAnimation
+  src="/images/laptop-hero.png" alt="" width={1400} height={1098} priority
+  direction="left-to-right" fade
+  duration="var(--duration-image-animation)" delay="var(--delay-laptop)"
+  className={styles.laptop} active={painting}
+/>
+```
+
+| Prop | Tipo | Requerido | Default | Nota |
+|---|---|---|---|---|
+| `src`, `alt`, `width`, `height` | passthrough de `next/image` | sí | — | |
+| `priority` | `boolean` | no | — | Passthrough de `next/image` |
+| `className` | `string` | no | — | Tamaño/posición del consumidor |
+| `direction` | `"diagonal" \| "left-to-right" \| "top-to-bottom"` | **sí** | — | Ángulo y eje del barrido de máscara — sin default sensato |
+| `fade` | `boolean` | no | `false` | Si además del barrido, la imagen entra con `translateY` desde `--space-3` |
+| `duration` | `string` (valor/expresión CSS) | no | `var(--duration-image-animation)` | p. ej. `"var(--duration-brush)"` |
+| `delay` | `string` (valor/expresión CSS) | no | `"0ms"` | p. ej. `"var(--delay-laptop)"` o `"calc(var(--delay-laptop) + var(--delay-stagger))"` |
+| `active` | `boolean` | no | — | **Modo controlado**: si se pasa (incluso `false`), el componente no observa su propio viewport — reacciona solo a este valor |
+| `onRevealChange` | `(active: boolean) => void` | no | — | Notifica cuándo arranca/rearma el ciclo, controlado o no |
+| `threshold` | `number` | no | `0.35` | Umbral del observer — solo aplica en modo no controlado |
+
+`duration`/`delay` son strings CSS (no números) porque `image-animation` es una animación CSS pura
+(`@keyframes` + `mask-position`/`opacity`/`transform`): el valor nunca se parsea en JS, va directo
+a `animation-duration`/`animation-delay`, dejando que la cascada de tokens (`var(...)`,
+`calc(...)`) siga siendo la única fuente de verdad. Contraste con `hacker-text-animation`, donde
+`duration`/`interval` sí son numéricos porque controlan un timer de JS.
+
+**Modo controlado vs. no controlado:** sin `active`, el componente se auto-observa (como hacía
+`BrushStroke`) y arranca solo al entrar en viewport. Con `active` explícito, no instala ningún
+`IntersectionObserver` propio (`useViewportCycle` gana un parámetro `enabled` para esto,
+`src/shared/hooks/useViewportCycle.ts`) — un padre le pasa el estado. Así se encadenan las tres
+capas del Hero: la brocha se auto-observa y avisa por `onRevealChange` cuándo arranca; laptop y
+dashboard están en modo controlado (`active={painting}`) para entrar en simultáneo con ella.
+
+Con `prefers-reduced-motion: reduce`, la imagen se muestra completa de inmediato y no se anima en
+ningún scroll — garantía incondicional en CSS (no en JS), para que no dependa de cómo llegó
+`active` en modo controlado.
 
 ## 6. Uso del logo
 
@@ -381,11 +467,11 @@ por `parseFloat` directo. Historial: este bug afectó al revoltijo del eyebrow d
   --duration-base: 300ms;
   --duration-slow: 600ms;
   --duration-brush: 3500ms;
-  --duration-reveal: 3600ms;
+  --duration-image-animation: 3600ms;
   --delay-laptop: 1000ms;
   --delay-stagger: 250ms;
-  --duration-scramble: 3500ms;
-  --interval-scramble: 60ms;
+  --duration-hacker-text: 3500ms;
+  --interval-hacker-text: 60ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }

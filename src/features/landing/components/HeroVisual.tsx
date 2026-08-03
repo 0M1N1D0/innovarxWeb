@@ -1,42 +1,59 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
-import { BrushStroke } from "@/shared/components/BrushStroke";
+import { ImageAnimation } from "@/shared/components/ImageAnimation";
 import styles from "./HeroVisual.module.css";
 
-// Hoja cliente de la columna visual del Hero (spec 002). Reemplaza al bloque
-// que antes montaba `BrushStroke` directo dentro de `Hero`: la frontera
-// "use client" no sube — `Hero` y `HomePage` siguen siendo Server Components,
-// solo importan y renderizan este componente.
+// Hoja cliente de la columna visual del Hero (spec 002). La frontera "use client" no sube —
+// `Hero` y `HomePage` siguen siendo Server Components, solo importan y renderizan este
+// componente.
 //
-// Orquesta las tres capas por delante de la brocha: laptop y dashboard
-// arrancan su entrada en simultáneo con el pintado de `BrushStroke` (RF-2 rev.,
-// ya no esperan a que termine), escalonadas entre sí vía `--delay-stagger` en
-// CSS (RF-3).
+// Orquesta las tres capas de `image-animation` (ia-docs/global/styles.md): la brocha se
+// auto-observa (modo no controlado) y avisa por `onRevealChange` cuándo arranca su pintado;
+// laptop y dashboard están en modo controlado (`active={painting}`) para entrar en
+// simultáneo con la brocha (RF-2 rev. de spec 002), escalonados entre sí vía `--delay-
+// stagger` (RF-3) en el prop `delay` de cada uno.
 export function HeroVisual() {
   const [painting, setPainting] = useState(false);
 
   return (
     <div className={styles.visual}>
-      <BrushStroke className={styles.brush} onPaintingChange={setPainting} />
-      <Image
+      <ImageAnimation
+        src="/images/brush-stroke-large.png"
+        alt=""
+        width={1200}
+        height={486}
+        priority
+        direction="diagonal"
+        duration="var(--duration-brush)"
+        className={styles.brush}
+        onRevealChange={setPainting}
+      />
+      <ImageAnimation
         src="/images/laptop-hero.png"
         alt=""
-        aria-hidden="true"
         width={1400}
         height={1098}
         priority
-        className={`${styles.laptop} ${painting ? styles.isRevealed : ""}`}
+        direction="left-to-right"
+        fade
+        duration="var(--duration-image-animation)"
+        delay="var(--delay-laptop)"
+        className={styles.laptop}
+        active={painting}
       />
-      <Image
+      <ImageAnimation
         src="/images/app-dashboard-hero.png"
         alt=""
-        aria-hidden="true"
         width={293}
         height={595}
         priority
-        className={`${styles.dashboard} ${painting ? styles.isRevealed : ""}`}
+        direction="top-to-bottom"
+        fade
+        duration="var(--duration-image-animation)"
+        delay="calc(var(--delay-laptop) + var(--delay-stagger))"
+        className={styles.dashboard}
+        active={painting}
       />
     </div>
   );

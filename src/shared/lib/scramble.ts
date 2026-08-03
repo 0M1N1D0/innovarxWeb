@@ -1,9 +1,14 @@
-const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+// Default histórico de spec 003 (RNF "alfabeto del revoltijo"): mayúsculas A–Z, sin
+// dígitos/símbolos, coherente con `text-transform: uppercase` del eyebrow original.
+// `HackerText` (componente reutilizable, spec 003 generalizada) lo expone como prop
+// `alphabet` opcional — este export es tanto el valor por defecto como la referencia para
+// cualquier otro consumidor que quiera reproducirlo.
+export const DEFAULT_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-/** Letra mayúscula A–Z aleatoria (req-003 RNF "alfabeto del revoltijo"). */
-export function randomLetter(): string {
-  const index = Math.floor(Math.random() * ALPHABET.length);
-  return ALPHABET.charAt(index);
+/** Letra aleatoria de `alphabet` (default A–Z mayúsculas, ver `DEFAULT_ALPHABET`). */
+export function randomLetter(alphabet: string = DEFAULT_ALPHABET): string {
+  const index = Math.floor(Math.random() * alphabet.length);
+  return alphabet.charAt(index);
 }
 
 // Barajado por clave aleatoria (Schwartzian transform) en vez de Fisher–Yates in-place:

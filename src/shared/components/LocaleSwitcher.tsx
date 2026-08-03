@@ -10,9 +10,9 @@ const LOCALE_LABELS: Record<Locale, string> = { es: "ES", en: "EN" };
 
 // Server Component a propósito (ver architecture.md §5): dos <Link> sin estado ni
 // efectos no necesitan "use client". `useLocale` (de "next-intl", no de
-// "@/i18n/navigation") funciona síncronamente en el servidor. (El primer y único
-// "use client" del proyecto es BrushStroke, que no tiene nada que ver con i18n — ver
-// shared/components/BrushStroke.tsx.)
+// "@/i18n/navigation") funciona síncronamente en el servidor. (Los Client Components del
+// proyecto — `ImageAnimation`, `HackerText`, `HeroVisual` — no tienen nada que ver con i18n:
+// ver architecture.md §5.)
 //
 // Se usa `next/link` con href construido a mano (`/${locale}`) en vez del `Link` de
 // @/i18n/navigation: ese `Link` es un Client Component (BaseLink llama a

@@ -1,0 +1,16 @@
+/* Expone el texto completo y correcto a lectores de pantalla en todo momento — el nodo
+   animado (aria-hidden en el JSX de HackerText.tsx) nunca es lo que se anuncia.
+   `position: absolute` en vez de `display: none` para que AT no lo ignore, y para que quede
+   fuera del flujo normal del `className` que trae el consumidor (no introduce un hueco de
+   más si ese layout usa flex/gap). */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
