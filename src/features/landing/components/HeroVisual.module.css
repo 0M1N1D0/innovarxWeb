@@ -10,14 +10,14 @@
 .visual {
   position: relative;
   isolation: isolate;
-  aspect-ratio: 1.2 / 1;
+  aspect-ratio: 1.35 / 1;
 }
 
 .brush {
   position: absolute;
   top: 0;
   left: 0;
-  width: 130%;
+  width: 100%;
   max-width: none;
   height: auto;
 }
@@ -29,34 +29,34 @@
 }
 
 .laptop {
-  width: 88%;
+  width: 82%;
   left: 0;
   bottom: 6%;
-  z-index: 1;
+  z-index: var(--z-hero-laptop);
   filter: drop-shadow(var(--shadow-lg));
 }
 
 .dashboard {
-  width: 30%;
+  width: 28%;
   right: 2%;
   bottom: -4%;
-  z-index: 2;
+  z-index: var(--z-hero-dashboard);
 }
 
-@media (max-width: 900px) {
+@media (min-width: 1024px) {
   .visual {
-    aspect-ratio: 1.35 / 1;
+    aspect-ratio: 1.2 / 1;
   }
 
   .brush {
-    width: 100%;
+    width: 130%;
   }
 
   .laptop {
-    width: 82%;
+    width: 88%;
   }
 
   .dashboard {
-    width: 28%;
+    width: 30%;
   }
 }

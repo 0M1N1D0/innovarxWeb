@@ -23,7 +23,6 @@ export function HeroVisual() {
         alt=""
         width={1200}
         height={486}
-        priority
         direction="diagonal"
         duration="var(--duration-brush)"
         className={styles.brush}
@@ -32,8 +31,8 @@ export function HeroVisual() {
       <ImageAnimation
         src="/images/laptop-hero.png"
         alt=""
-        width={1400}
-        height={1098}
+        width={1000}
+        height={784}
         priority
         direction="left-to-right"
         fade
@@ -47,7 +46,6 @@ export function HeroVisual() {
         alt=""
         width={293}
         height={595}
-        priority
         direction="top-to-bottom"
         fade
         duration="var(--duration-image-animation)"

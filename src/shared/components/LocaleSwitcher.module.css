@@ -1,5 +1,4 @@
-/* Hermano de .nav en SiteHeader, nunca hijo: .nav se oculta bajo 720px y el switcher
-   debe seguir visible ahí — es la única forma de cambiar idioma en móvil. */
+/* El switcher sigue visible junto al menú colapsado y también se incluye en su panel. */
 .switcher {
   flex-shrink: 0;
 }
@@ -14,8 +13,12 @@
 }
 
 .link {
-  display: block;
-  padding: var(--space-1) var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--size-touch-target);
+  min-width: var(--size-touch-target);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-pill);
   font-family: var(--font-mono);
   font-size: var(--text-caption);

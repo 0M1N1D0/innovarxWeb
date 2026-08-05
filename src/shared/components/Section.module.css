@@ -1,5 +1,5 @@
 .section {
-  padding: var(--space-9) var(--space-5);
+  padding: var(--space-section-y) var(--space-gutter);
 }
 
 .noTopPadding {
@@ -20,6 +20,6 @@
 }
 
 .container {
-  max-width: 1120px;
+  max-width: var(--container-max);
   margin: 0 auto;
 }

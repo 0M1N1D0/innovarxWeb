@@ -10,8 +10,8 @@ InnovArx marketing/catalog website — Next.js frontend for a software dev agenc
 
 Before making any structural, tech-stack, or visual-design decision, read the relevant doc below — decisions are not improvised in code, they're decided in these docs first (in the same change, if new):
 
-- **`ia-docs/global/architecture.md`** — system boundaries, feature organization, data flow, routes. Answers *where* and *why*.
-- **`ia-docs/global/tech-stack.md`** — framework, TS conventions, tooling, naming conventions. Answers *with what*.
+- **`ia-docs/global/architecture.md`** — system boundaries, feature organization, data flow, routes. Answers _where_ and _why_.
+- **`ia-docs/global/tech-stack.md`** — framework, TS conventions, tooling, naming conventions. Answers _with what_.
 - **`ia-docs/global/styles.md`** — exact color/typography/spacing tokens extracted from real brand assets. Any color/font/size used must come from here.
 
 ## Commands
@@ -30,6 +30,7 @@ npm only — no pnpm/yarn lockfiles. No test runner is set up yet (open decision
 ## Architecture
 
 **Frontend-only, feature-based.** Next.js (App Router) covers rendering, routes, and UI exclusively — it is not, and must not informally become, the backend:
+
 - No business logic in Route Handlers (`app/api/**`). The only tolerated use of `app/api/**` is a thin proxy to a future separate FastAPI service (no business logic, just forwarding), to avoid exposing keys/endpoints in the browser.
 - No direct DB access, no stateful auth (sessions, long-lived tokens) from Next.js.
 - If/when real backend is needed (persistent forms, auth, admin panel), it's built as a separate FastAPI service/repo — never inside this one.
@@ -55,12 +56,13 @@ src/
 ```
 
 Rules that matter (full rationale in architecture.md §3):
+
 - Each feature exposes its public surface through a single `index.ts`. **Never import a feature's internal path from another feature.**
 - **Features never import each other.** Shared code goes to `shared/`.
 - `app/` only composes routes/layouts/metadata and imports from feature `index.ts`; it never contains business or UI logic itself.
 - **Data flow is one-directional and always through this chain:** `component → hook → service → data source`. Components never `fetch` directly — `services/` is the only layer that knows whether data comes from a local file, a mock, or (eventually) a real FastAPI call. This is what keeps a future local→FastAPI migration contained to `services/` files only.
 
-**Rendering:** Server Components by default. Add `"use client"` only at the leaf component that actually needs state/effects/browser events/browser APIs — push the boundary as far down the tree as possible, never on a wrapping container. `LocaleSwitcher` is still a Server Component; it only becomes a client component once routes beyond `/` exist and it needs `usePathname()` to preserve the active path across a locale switch. **The first `"use client"` in the app is `BrushStroke`** (`src/shared/components/BrushStroke.tsx`, spec `ia-docs/specs/001-brush-animated-large/requirements.md`) — it needs `IntersectionObserver` to animate on viewport entry; the boundary stays at that leaf, `Hero`/`HomePage` remain Server Components.
+**Rendering:** Server Components by default. Add `"use client"` only at the leaf component that actually needs state/effects/browser events/browser APIs — push the boundary as far down the tree as possible, never on a wrapping container. `LocaleSwitcher` is still a Server Component; it only becomes a client component once routes beyond `/` exist and it needs `usePathname()` to preserve the active path across a locale switch. **The first `"use client"` in the app is `BrushStroke`** (`src/shared/components/BrushStroke.tsx`, spec `ia-docs/specs/001-brush-animated-large/req-001.md`) — it needs `IntersectionObserver` to animate on viewport entry; the boundary stays at that leaf, `Hero`/`HomePage` remain Server Components.
 
 **Routes ↔ features map 1:1** (architecture.md §6), all locale-prefixed except the root shim: `/` → static shim, no feature, bounces to `/es`; `/es` `/en` → `landing` (implemented, also assembles `services-catalog`); `/es/servicios` `/en/servicios` → `services-catalog` (pending); `/es/contacto` `/en/contacto` → `contact` (pending). ⚠ A locale-prefixed route pair must use the **identical** segment in both languages (no localized pathnames without a server). No `pricing` feature/route exists — the landing deliberately does not show prices; don't reintroduce prices into `landing` or `services-catalog` without an explicit `pricing` feature.
 

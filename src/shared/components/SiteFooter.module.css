@@ -1,11 +1,11 @@
 .footer {
   background: var(--color-surface-dark);
   color: var(--color-white);
-  padding: var(--space-8) var(--space-5) var(--space-5);
+  padding: var(--space-8) var(--space-gutter) var(--space-5);
 }
 
 .inner {
-  max-width: 1120px;
+  max-width: var(--container-max);
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
@@ -13,10 +13,6 @@
   gap: var(--space-7);
   padding-bottom: var(--space-6);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.brand {
-  max-width: 320px;
 }
 
 .wordmark {
@@ -46,6 +42,9 @@
 }
 
 .links a {
+  display: flex;
+  align-items: center;
+  min-height: var(--size-touch-target);
   font-size: var(--text-body-sm);
   color: rgba(255, 255, 255, 0.75);
 }
@@ -61,7 +60,7 @@
 }
 
 .copyright {
-  max-width: 1120px;
+  max-width: var(--container-max);
   margin: var(--space-5) auto 0;
   font-size: var(--text-caption);
   color: rgba(255, 255, 255, 0.45);

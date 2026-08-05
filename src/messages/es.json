@@ -19,7 +19,11 @@
   },
   "siteHeader": {
     "logoLabel": "InnovArx — inicio",
-    "navLabel": "Navegación principal"
+    "navLabel": "Navegación principal",
+    "mobileNav": {
+      "open": "Abrir menú",
+      "close": "Cerrar menú"
+    }
   },
   "siteFooter": {
     "linksLabel": "Enlaces del sitio",
