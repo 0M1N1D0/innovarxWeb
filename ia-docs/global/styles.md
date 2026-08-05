@@ -558,7 +558,7 @@ desde `md` y 32px desde `lg`.
   --duration-image-animation: 3600ms;
   --delay-laptop: 1000ms;
   --delay-stagger: 250ms;
-  --duration-hacker-text: 3500ms;
+  --duration-hacker-text: 2500ms;
   --interval-hacker-text: 60ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);

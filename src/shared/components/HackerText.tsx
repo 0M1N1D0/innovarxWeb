@@ -59,10 +59,10 @@ export function HackerText({
     // Los tokens se leen del propio nodo en vez de duplicarse como constantes en TS —
     // salvo que el consumidor pase un override explícito por prop. `cssTimeToMs` (no
     // `parseFloat` directo) porque el minificador sirve estos tokens normalizados a
-    // segundos ("3500ms" → "3.5s") — ver impl-003.md §12.
+    // segundos ("2500ms" → "2.5s") — ver impl-003.md §12.
     const computed = getComputedStyle(el);
     const duration =
-      durationProp ?? cssTimeToMs(computed.getPropertyValue("--duration-hacker-text"), 3500);
+      durationProp ?? cssTimeToMs(computed.getPropertyValue("--duration-hacker-text"), 2500);
     const interval =
       intervalProp ?? cssTimeToMs(computed.getPropertyValue("--interval-hacker-text"), 60);
     const ranks = buildRevealRanks(text);
