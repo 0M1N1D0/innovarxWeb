@@ -398,6 +398,7 @@ desde `md` y 32px desde `lg`.
   --logo-width: 120px;
   --mobile-nav-width: 360px;
   --size-touch-target: 44px;
+  --size-trust-icon: 64px;
 
   /* Capas */
   --z-hero-laptop: 1;
@@ -520,6 +521,7 @@ desde `md` y 32px desde `lg`.
   --logo-width: 120px;
   --mobile-nav-width: 360px;
   --size-touch-target: 44px;
+  --size-trust-icon: 64px;
 
   /* Espaciado */
   --space-1: 4px;

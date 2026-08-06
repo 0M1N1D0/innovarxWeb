@@ -37,20 +37,20 @@
       "eyebrow": "El arte de innovar",
       "title": "Desarrollo web <accent>a medida</accent>, de landing page a plataforma completa.",
       "subcopy": "Creamos experiencias digitales rápidas, seguras y escalables que convierten visitantes en clientes.",
-      "ctaServices": "Ver servicios →",
-      "trust": {
-        "security": {
-          "title": "Seguridad",
-          "description": "SSL, backups y mejores prácticas."
-        },
-        "performance": {
-          "title": "Rendimiento",
-          "description": "Sitios rápidos y optimizados."
-        },
-        "support": {
-          "title": "Soporte",
-          "description": "Acompañamiento continuo."
-        }
+      "ctaServices": "Ver servicios →"
+    },
+    "trust": {
+      "security": {
+        "title": "Seguridad",
+        "description": "SSL, backups y mejores prácticas."
+      },
+      "performance": {
+        "title": "Rendimiento",
+        "description": "Sitios rápidos y optimizados."
+      },
+      "support": {
+        "title": "Soporte",
+        "description": "Acompañamiento continuo."
       }
     },
     "process": {

@@ -2,7 +2,7 @@ import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { FinalCta, Hero, Process } from "@/features/landing";
+import { FinalCta, Hero, Process, TrustBar } from "@/features/landing";
 import { ServiceLevels } from "@/features/services-catalog";
 import { Section } from "@/shared/components/Section";
 
@@ -19,8 +19,11 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <>
-      <Section noTopPadding>
+      <Section noTopPadding noBottomPadding>
         <Hero />
+      </Section>
+      <Section noTopPadding>
+        <TrustBar />
       </Section>
       <Section id="servicios" tone="alt">
         <ServiceLevels locale={locale} />

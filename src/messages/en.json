@@ -37,20 +37,20 @@
       "eyebrow": "The art of innovation",
       "title": "Web development <accent>built to fit</accent>, from landing page to full platform.",
       "subcopy": "We build fast, secure, and scalable digital experiences that turn visitors into customers.",
-      "ctaServices": "See services →",
-      "trust": {
-        "security": {
-          "title": "Security",
-          "description": "SSL, backups, and best practices."
-        },
-        "performance": {
-          "title": "Performance",
-          "description": "Fast, optimized websites."
-        },
-        "support": {
-          "title": "Support",
-          "description": "Ongoing support."
-        }
+      "ctaServices": "See services →"
+    },
+    "trust": {
+      "security": {
+        "title": "Security",
+        "description": "SSL, backups, and best practices."
+      },
+      "performance": {
+        "title": "Performance",
+        "description": "Fast, optimized websites."
+      },
+      "support": {
+        "title": "Support",
+        "description": "Ongoing support."
       }
     },
     "process": {
