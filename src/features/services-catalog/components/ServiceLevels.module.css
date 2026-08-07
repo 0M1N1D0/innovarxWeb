@@ -40,6 +40,9 @@
 
 @media (min-width: 1024px) {
   .grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+    /* Con el stepper de ServiceLevelSteps en medio, el respiro grande queda sobre los
+       números y la grilla se acerca a ellos. */
+    margin-top: var(--space-5);
   }
 }

@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("/fonts/material-symbols-outlined.ttf") format("truetype");
+}
+
 .card {
   position: relative;
   display: flex;
@@ -32,6 +40,32 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-text-subtle);
+}
+
+.icon {
+  display: block;
+  align-self: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-family: "Material Symbols Outlined";
+  font-size: 2rem;
+  font-style: normal;
+  font-weight: 400;
+  font-feature-settings: "liga";
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+  letter-spacing: normal;
+  line-height: 1;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
 }
 
 .name {

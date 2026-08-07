@@ -30,7 +30,6 @@ const SERVICE_LEVELS: Record<Locale, ServiceLevel[]> = {
       description:
         "Sitio de múltiples páginas que presenta tu empresa de forma profesional. Perfecto para negocios establecidos que necesitan proyectar confianza.",
       deliveryTime: { min: 3, max: 5, unit: "weeks" },
-      popular: true,
     },
     {
       id: "sitio-con-login",
@@ -73,7 +72,6 @@ const SERVICE_LEVELS: Record<Locale, ServiceLevel[]> = {
       description:
         "A multi-page site that presents your company professionally. Perfect for established businesses that need to project trust.",
       deliveryTime: { min: 3, max: 5, unit: "weeks" },
-      popular: true,
     },
     {
       id: "sitio-con-login",

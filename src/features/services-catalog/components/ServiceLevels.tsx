@@ -2,6 +2,7 @@ import type { Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { getServiceLevels } from "../services/service-levels.service";
 import { ServiceLevelCard } from "./ServiceLevelCard";
+import { ServiceLevelSteps } from "./ServiceLevelSteps";
 import styles from "./ServiceLevels.module.css";
 
 interface ServiceLevelsProps {
@@ -22,6 +23,7 @@ export async function ServiceLevels({ locale }: ServiceLevelsProps) {
           el titular de ambos catálogos se actualiza a mano. */}
       <h2 className={styles.title}>{t("title")}</h2>
       <p className={styles.intro}>{t("intro")}</p>
+      <ServiceLevelSteps serviceLevels={serviceLevels} />
       <ul className={styles.grid}>
         {serviceLevels.map((serviceLevel) => (
           <ServiceLevelCard

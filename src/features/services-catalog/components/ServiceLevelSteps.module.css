@@ -1,0 +1,93 @@
+/*
+ * Oculto por defecto: bajo 1024px las tarjetas dejan de estar en 5 columnas
+ * (ver ServiceLevels.module.css) y los círculos ya no tienen con qué alinearse.
+ * padding/list-style: el reset global (globals.css) solo cubre `ul`, no `ol` — sin esto el
+ * indent nativo de listas ordenadas (padding-inline-start: 40px) descentra todo el riel
+ * respecto a la grilla de tarjetas.
+ */
+.steps {
+  display: none;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 1024px) {
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-5);
+    margin-top: var(--space-8);
+  }
+}
+
+.step {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  /* Fallback defensivo si algún día se agrega un sexto nivel (ver nota en ServiceLevels.tsx) */
+  --step-color: var(--color-brand-pink);
+  --step-color-next: var(--color-brand-pink);
+}
+
+.step:nth-child(1) {
+  --step-color: var(--color-brand-blue);
+  --step-color-next: var(--color-brand-indigo);
+}
+
+.step:nth-child(2) {
+  --step-color: var(--color-brand-indigo);
+  --step-color-next: var(--color-brand-purple);
+}
+
+.step:nth-child(3) {
+  --step-color: var(--color-brand-purple);
+  --step-color-next: var(--color-brand-magenta);
+}
+
+.step:nth-child(4) {
+  --step-color: var(--color-brand-magenta);
+  --step-color-next: var(--color-brand-pink);
+}
+
+.step:nth-child(5) {
+  --step-color: var(--color-brand-pink);
+  --step-color-next: var(--color-brand-pink);
+}
+
+.number {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--size-level-step);
+  height: var(--size-level-step);
+  border: 2px solid var(--step-color);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  color: var(--step-color);
+  font-family: var(--font-mono);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-indent: 0.08em; /* recentra el dígito ópticamente tras el letter-spacing */
+}
+
+/* Conector punteado entre un círculo y el siguiente, con degradado del color propio al del
+   siguiente nivel. El tramo cruza el `gap` de la grilla hasta tocar el círculo vecino. */
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(50% + var(--size-level-step) / 2 + var(--space-3));
+  right: calc(var(--size-level-step) / 2 + var(--space-3) - var(--space-5) - 50%);
+  height: 2px;
+  transform: translateY(-50%);
+  background-image: linear-gradient(90deg, var(--step-color), var(--step-color-next));
+  /* Solo se usa el canal alfa de esta máscara para pintar los guiones; el color del token
+     (--color-ink) es irrelevante — evita escribir un hex literal en la máscara. */
+  mask-image: repeating-linear-gradient(
+    90deg,
+    var(--color-ink) 0 var(--space-2),
+    transparent var(--space-2) var(--space-4)
+  );
+}
