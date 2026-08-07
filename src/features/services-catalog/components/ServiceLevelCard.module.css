@@ -48,7 +48,7 @@
   inline-size: 2rem;
   block-size: 2rem;
   overflow: hidden;
-  color: var(--color-text-secondary);
+  color: var(--color-brand-purple);
   font-family: "Material Symbols Outlined";
   font-size: 2rem;
   font-style: normal;
@@ -66,6 +66,16 @@
   word-wrap: normal;
   direction: ltr;
   -webkit-font-smoothing: antialiased;
+}
+
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  .icon {
+    background-image: var(--gradient-brand-x);
+    background-clip: text;
+    color: transparent;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 .name {

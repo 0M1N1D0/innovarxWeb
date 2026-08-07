@@ -19,16 +19,14 @@ const SERVICE_LEVELS: Record<Locale, ServiceLevel[]> = {
       id: "landing-page",
       level: 1,
       name: "Landing Page",
-      description:
-        "Página única de alto impacto diseñada para convertir visitantes en clientes. Ideal para promocionar un producto, servicio o evento específico.",
+      description: "Página única de alto impacto diseñada para convertir visitantes en clientes.",
       deliveryTime: { min: 1, max: 2, unit: "weeks" },
     },
     {
       id: "sitio-informativo",
       level: 2,
       name: "Sitio Informativo / Corporativo",
-      description:
-        "Sitio de múltiples páginas que presenta tu empresa de forma profesional. Perfecto para negocios establecidos que necesitan proyectar confianza.",
+      description: "Sitio de múltiples páginas que presenta tu empresa de forma profesional.",
       deliveryTime: { min: 3, max: 5, unit: "weeks" },
     },
     {
@@ -61,16 +59,14 @@ const SERVICE_LEVELS: Record<Locale, ServiceLevel[]> = {
       id: "landing-page",
       level: 1,
       name: "Landing Page",
-      description:
-        "A single high-impact page designed to convert visitors into customers. Ideal for promoting a specific product, service, or event.",
+      description: "A single high-impact page designed to convert visitors into customers.",
       deliveryTime: { min: 1, max: 2, unit: "weeks" },
     },
     {
       id: "sitio-informativo",
       level: 2,
       name: "Informational / Corporate Website",
-      description:
-        "A multi-page site that presents your company professionally. Perfect for established businesses that need to project trust.",
+      description: "A multi-page site that presents your company professionally.",
       deliveryTime: { min: 3, max: 5, unit: "weeks" },
     },
     {
