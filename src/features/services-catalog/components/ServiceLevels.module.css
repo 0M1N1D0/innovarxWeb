@@ -24,6 +24,27 @@
   color: var(--color-text-secondary);
 }
 
+.levelsVisual {
+  position: relative;
+  isolation: isolate;
+  display: flow-root;
+}
+
+.zigzag {
+  position: absolute;
+  z-index: -1;
+  inset: 0 calc(-1 * var(--space-4)) calc(-1 * var(--space-5));
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.zigzag img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left 30%;
+}
+
 .grid {
   margin-top: var(--space-8);
   display: grid;
@@ -44,5 +65,10 @@
     /* Con el stepper de ServiceLevelSteps en medio, el respiro grande queda sobre los
        números y la grilla se acerca a ellos. */
     margin-top: var(--space-5);
+  }
+
+  .zigzag {
+    left: calc(-1 * var(--space-9));
+    right: calc(-1 * var(--space-5));
   }
 }

@@ -1,5 +1,6 @@
 import type { Locale } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { ImageAnimation } from "@/shared/components/ImageAnimation";
 import { getServiceLevels } from "../services/service-levels.service";
 import { ServiceLevelCard } from "./ServiceLevelCard";
 import { ServiceLevelSteps } from "./ServiceLevelSteps";
@@ -23,16 +24,27 @@ export async function ServiceLevels({ locale }: ServiceLevelsProps) {
           el titular de ambos catálogos se actualiza a mano. */}
       <h2 className={styles.title}>{t("title")}</h2>
       <p className={styles.intro}>{t("intro")}</p>
-      <ServiceLevelSteps serviceLevels={serviceLevels} />
-      <ul className={styles.grid}>
-        {serviceLevels.map((serviceLevel) => (
-          <ServiceLevelCard
-            key={serviceLevel.id}
-            serviceLevel={serviceLevel}
-            total={serviceLevels.length}
-          />
-        ))}
-      </ul>
+      <div className={styles.levelsVisual}>
+        <ImageAnimation
+          src="/images/imagen-brocha-zigzag.webp"
+          alt=""
+          width={1536}
+          height={1024}
+          direction="diagonal"
+          duration="var(--duration-brush)"
+          className={styles.zigzag}
+        />
+        <ServiceLevelSteps serviceLevels={serviceLevels} />
+        <ul className={styles.grid}>
+          {serviceLevels.map((serviceLevel) => (
+            <ServiceLevelCard
+              key={serviceLevel.id}
+              serviceLevel={serviceLevel}
+              total={serviceLevels.length}
+            />
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
