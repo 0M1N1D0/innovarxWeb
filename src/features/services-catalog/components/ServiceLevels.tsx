@@ -6,6 +6,10 @@ import { ServiceLevelCard } from "./ServiceLevelCard";
 import { ServiceLevelSteps } from "./ServiceLevelSteps";
 import styles from "./ServiceLevels.module.css";
 
+// Flag de diseño: la brocha circular junto al título es un elemento decorativo que aún se
+// está probando visualmente. Cambiar a `false` la oculta sin tocar el resto del layout.
+const SHOW_CIRCULAR_BRUSH = true;
+
 interface ServiceLevelsProps {
   locale: Locale;
 }
@@ -19,10 +23,25 @@ export async function ServiceLevels({ locale }: ServiceLevelsProps) {
   return (
     <div className={styles.wrapper}>
       <p className={styles.eyebrow}>{t("eyebrow")}</p>
-      {/* servicesCatalog.title deletrea el conteo ("Cinco niveles"/"Five levels") a mano
-          en cada idioma — ICU no puede deletrear números. Si se añade un sexto nivel,
-          el titular de ambos catálogos se actualiza a mano. */}
-      <h2 className={styles.title}>{t("title")}</h2>
+      <div className={styles.titleRow}>
+        {SHOW_CIRCULAR_BRUSH && (
+          <div className={styles.circularBrushBleed}>
+            <ImageAnimation
+              src="/images/imagen-bricha-circular-1.png"
+              alt=""
+              width={1536}
+              height={1024}
+              direction="diagonal"
+              duration="var(--duration-brush)"
+              className={styles.circularBrush}
+            />
+          </div>
+        )}
+        {/* servicesCatalog.title deletrea el conteo ("Cinco niveles"/"Five levels") a mano
+            en cada idioma — ICU no puede deletrear números. Si se añade un sexto nivel,
+            el titular de ambos catálogos se actualiza a mano. */}
+        <h2 className={styles.title}>{t("title")}</h2>
+      </div>
       <p className={styles.intro}>{t("intro")}</p>
       <div className={styles.levelsVisual}>
         <ImageAnimation

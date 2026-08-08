@@ -11,10 +11,62 @@
   color: var(--color-brand-indigo);
 }
 
+.titleRow {
+  position: relative;
+  isolation: isolate;
+}
+
 .title {
   margin-top: var(--space-3);
   font-size: var(--text-h2);
   font-weight: 600;
+}
+
+/* Truco de "full-bleed" clásico: `left: 50%` cae en el centro horizontal de `.titleRow`,
+   que coincide con el centro del viewport porque `.container` (Section.module.css) está
+   centrado con `margin: 0 auto`. `width: 100vw` + `translateX(-50%)` (mitad del propio
+   ancho, no del padre) deja esta franja exactamente del ancho del viewport y pegada a sus
+   dos bordes — así la imagen que cuelga dentro llega hasta la orilla real de la pantalla,
+   no solo hasta el borde del container.
+
+   `top` negativo a propósito: la brocha desborda hacia arriba, fuera de esta `Section`, y
+   asoma sobre el límite con la sección blanca del TrustBar (ver ia-docs/muestra.png, marca
+   del usuario). No es un bug de layout — `body` usa `overflow-x: clip` (solo horizontal,
+   globals.css), así que nada la recorta verticalmente, y el `z-index: -1` queda confinado
+   al stacking context de `.titleRow` (`isolation: isolate`), por lo que pinta detrás del
+   `<h2>` pero no detrás del fondo de la sección anterior. */
+.circularBrushBleed {
+  position: absolute;
+  left: 50%;
+  top: calc(-1 * (var(--space-9) + var(--space-6)));
+  width: 100vw;
+  transform: translateX(-50%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.circularBrush {
+  display: none;
+  width: 260px;
+  /* Espejo horizontal: el trazo original abre hacia la derecha, mirroreado abre hacia
+     el título que tiene al lado. */
+  transform: scaleX(-1);
+}
+
+@media (min-width: 640px) {
+  .circularBrush {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .circularBrushBleed {
+    top: calc(-1 * (var(--space-10) + var(--space-9)));
+  }
+
+  .circularBrush {
+    width: 420px;
+  }
 }
 
 .intro {
